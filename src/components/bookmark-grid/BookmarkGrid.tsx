@@ -145,7 +145,17 @@ export function BookmarkGrid() {
     <section className="bookmarks-section" aria-label={`${desktop.name}的书签`}>
       <header className="bookmarks-head">
         <div>
-          <h2 className="bookmarks-title">{desktop.name}</h2>
+          <h2 className="bookmarks-title">
+            <img
+              className="bookmarks-title__folder"
+              src="/icons/mac/folder.png"
+              alt=""
+              width={20}
+              height={20}
+              draggable={false}
+            />
+            {desktop.name}
+          </h2>
           <div className="bookmarks-meta">
             <span>{availableCount} 个书签</span>
             {missingCount > 0 ? (

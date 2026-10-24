@@ -1,27 +1,48 @@
-import { GearSix } from '@phosphor-icons/react';
+import { AppleLogo, GearSix, MagnifyingGlass, Moon, Sun } from '@phosphor-icons/react';
 import { useNow } from '../../hooks/use-now';
 import { useActiveDesktop } from '../../stores/desktop-store';
-import { setSettingsOpen } from '../../stores/ui-store';
-import { formatClock, formatDate } from '../../utils/date';
+import { setSearchOpen, setSettingsOpen, setWidgetMenuOpen } from '../../stores/ui-store';
+import { formatClock, formatMenuDate } from '../../utils/date';
 import { DynamicIsland } from '../dynamic-island/DynamicIsland';
 
 export function StatusBar() {
   const now = useNow(20_000);
   const desktop = useActiveDesktop();
+  const daytime = now.getHours() >= 6 && now.getHours() < 18;
 
   return (
     <header className="status-bar">
       <div className="status-left">
-        <div className="brand">
-          <img className="brand__icon" src="/icons/icon-32.png" alt="" width={23} height={23} />
-          <span className="brand__name">GlassDesk</span>
-        </div>
+        <button
+          type="button"
+          className="brand status-menu-button"
+          aria-label="关于 GlassDesk"
+          title="关于 GlassDesk"
+          onClick={() => setSettingsOpen(true, 'about')}
+        >
+          <AppleLogo size={15} weight="fill" aria-hidden />
+        </button>
         {desktop ? (
-          <>
-            <span className="status-divider" aria-hidden="true" />
-            <span className="status-desktop">{desktop.name}</span>
-          </>
+          <button
+            type="button"
+            className="status-desktop status-menu-button"
+            title="桌面与书签"
+            onClick={() => setSettingsOpen(true, 'desktops')}
+          >
+            {desktop.name}
+          </button>
         ) : null}
+        <nav className="status-menu" aria-label="菜单">
+          <button type="button" onClick={() => setSettingsOpen(true, 'desktops')}>
+            书签
+          </button>
+          <button type="button" onClick={() => setWidgetMenuOpen(true)}>
+            小组件
+          </button>
+          <button type="button" onClick={() => setSettingsOpen(true, 'appearance')}>
+            外观
+          </button>
+        </nav>
       </div>
 
       <div className="status-center">
@@ -29,7 +50,19 @@ export function StatusBar() {
       </div>
 
       <div className="status-right">
-        <span className="status-date">{formatDate(now)}</span>
+        <span className="status-weather" aria-hidden="true">
+          {daytime ? <Sun size={14} weight="fill" /> : <Moon size={14} weight="fill" />}
+        </span>
+        <button
+          type="button"
+          className="status-action"
+          aria-label="搜索"
+          title="搜索（⌘K）"
+          onClick={() => setSearchOpen(true)}
+        >
+          <MagnifyingGlass size={15} />
+        </button>
+        <span className="status-date">{formatMenuDate(now)}</span>
         <span className="status-time">{formatClock(now)}</span>
         <button
           type="button"
@@ -38,7 +71,7 @@ export function StatusBar() {
           onClick={() => setSettingsOpen(true, 'appearance')}
           title="设置"
         >
-          <GearSix size={16} />
+          <GearSix size={15} />
         </button>
       </div>
     </header>

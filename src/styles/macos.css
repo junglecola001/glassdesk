@@ -1,0 +1,920 @@
+/* -------------------------------------------------------------------------- */
+/* Dark macOS surfaces                                                        */
+/* -------------------------------------------------------------------------- */
+
+/* Clock widget ------------------------------------------------------------- */
+
+.clock-widget {
+  padding: 2px 0 4px;
+}
+
+.clock-time {
+  color: #fff;
+  font-size: 46px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  text-shadow: 0 2px 12px rgb(0 0 0 / 30%);
+}
+
+.clock-meta {
+  gap: 8px;
+  margin-top: 10px;
+  color: var(--ink-3);
+  font-size: 11.5px;
+  text-shadow: none;
+}
+
+.clock-date {
+  color: var(--ink-2);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.clock-sep {
+  width: 1px;
+  height: 10px;
+  background: rgb(255 255 255 / 14%);
+}
+
+.clock-greeting {
+  color: var(--ink-3);
+}
+
+.clock-sub {
+  color: var(--ink-3);
+}
+
+/* Notes --------------------------------------------------------------------- */
+
+.widget--note {
+  background-color: rgb(35 37 43 / 82%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 8%) 0%, rgb(255 255 255 / 2%) 48%, transparent 72%),
+    linear-gradient(205deg, rgb(84 70 46 / 16%), transparent 56%);
+  --note-accent: #b9a06c;
+}
+
+.widget--note[data-note-color='apricot'] {
+  background-color: rgb(45 40 35 / 84%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 8%) 0%, transparent 52%),
+    linear-gradient(205deg, rgb(150 92 48 / 18%), transparent 58%);
+  --note-accent: #d9a271;
+}
+
+.widget--note[data-note-color='mint'] {
+  background-color: rgb(33 42 38 / 84%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 8%) 0%, transparent 52%),
+    linear-gradient(205deg, rgb(58 120 92 / 16%), transparent 58%);
+  --note-accent: #7fc5a3;
+}
+
+.widget--note[data-note-color='lilac'] {
+  background-color: rgb(40 38 50 / 84%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 8%) 0%, transparent 52%),
+    linear-gradient(205deg, rgb(92 82 160 / 18%), transparent 58%);
+  --note-accent: #a9a2e8;
+}
+
+.note-tab {
+  color: var(--ink-3);
+}
+
+.note-tab:hover {
+  color: var(--ink-2);
+  background: rgb(255 255 255 / 7%);
+}
+
+.note-tab[data-active='true'] {
+  color: #fff;
+  background: rgb(255 255 255 / 12%);
+  border-color: rgb(255 255 255 / 8%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.note-add,
+.note-action,
+.note-status {
+  color: var(--ink-3);
+}
+
+.note-add:hover,
+.note-action:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 9%);
+}
+
+.note-title {
+  color: #fff;
+  text-shadow: none;
+}
+
+.note-title::placeholder,
+.note-body::placeholder {
+  color: rgb(255 255 255 / 32%);
+}
+
+.note-body {
+  color: var(--ink-2);
+}
+
+.note-color {
+  border-color: rgb(0 0 0 / 30%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 25%);
+}
+
+.note-color[data-active='true'] {
+  box-shadow:
+    0 0 0 2px rgb(29 31 36 / 90%),
+    0 0 0 3px rgb(10 132 255 / 70%);
+}
+
+.note-action[data-armed='true'] {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.note-empty {
+  color: var(--ink-3);
+}
+
+/* Countdown ----------------------------------------------------------------- */
+
+.widget[data-widget-type='countdown'] {
+  border-color: rgb(255 255 255 / 13%);
+  background-color: rgb(33 37 48 / 84%);
+  background-image:
+    radial-gradient(120% 100% at 88% 0%, rgb(10 132 255 / 26%), transparent 58%),
+    linear-gradient(160deg, rgb(255 255 255 / 9%) 0%, rgb(255 255 255 / 2%) 46%, transparent 70%);
+  box-shadow:
+    0 30px 60px -26px rgb(0 0 0 / 68%),
+    0 2px 10px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 12%);
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .widget__title {
+  color: rgb(255 255 255 / 62%);
+}
+
+.widget[data-widget-type='countdown'] .widget__action {
+  color: rgb(0 0 0 / 62%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-title {
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .countdown-switcher {
+  border-color: rgb(255 255 255 / 10%);
+  background-color: rgb(255 255 255 / 6%);
+  background-image: url("data:image/svg+xml,%3Csvg width='9' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ffffff' stroke-opacity='.6' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  color: var(--ink-2);
+}
+
+.widget[data-widget-type='countdown'] .countdown-switcher option {
+  background: #2c2e34;
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .countdown-icon-button {
+  color: var(--ink-3);
+}
+
+.widget[data-widget-type='countdown'] .countdown-icon-button:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 9%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-days {
+  color: #fff;
+  font-weight: 300;
+  text-shadow: none;
+}
+
+.widget[data-widget-type='countdown'] .countdown-days-label {
+  color: var(--ink-3);
+}
+
+.widget[data-widget-type='countdown'] .countdown-clock {
+  background: rgb(255 255 255 / 8%);
+  color: var(--ink-2);
+}
+
+.widget[data-widget-type='countdown'] .countdown-clock--expired {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.widget[data-widget-type='countdown'] .countdown-target {
+  color: var(--ink-3);
+}
+
+.widget[data-widget-type='countdown'] .countdown-progress {
+  background: rgb(255 255 255 / 10%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-progress i {
+  background: linear-gradient(90deg, #0a84ff, #64d2ff);
+}
+
+.widget[data-widget-type='countdown'] .countdown-footer__text {
+  color: var(--ink-3);
+}
+
+.widget[data-widget-type='countdown'] .countdown-complete {
+  color: var(--success);
+}
+
+.widget[data-widget-type='countdown'] .btn--glass {
+  color: var(--ink-2);
+  background: rgb(255 255 255 / 7%);
+  border-color: rgb(255 255 255 / 10%);
+}
+
+.widget[data-widget-type='countdown'] .btn--glass:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 12%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-form .btn--primary {
+  color: #fff;
+  background: var(--accent);
+}
+
+.widget[data-widget-type='countdown'] .countdown-empty {
+  color: var(--ink-3);
+}
+
+.widget[data-widget-type='countdown'] .countdown-empty strong {
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .countdown-error {
+  color: #ff9b93;
+}
+
+.countdown-form .input {
+  color: var(--ink);
+}
+
+/* Pomodoro ------------------------------------------------------------------ */
+
+.pomodoro-modes {
+  background: rgb(255 255 255 / 6%);
+}
+
+.pomodoro-mode {
+  color: var(--ink-3);
+}
+
+.pomodoro-mode[data-active='true'] {
+  color: #fff;
+  background: rgb(255 255 255 / 13%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.pomodoro-rounds,
+.pomodoro-phase {
+  color: var(--ink-3);
+}
+
+.pomodoro-ring__track {
+  stroke: rgb(255 255 255 / 11%);
+}
+
+.pomodoro-ring__value {
+  stroke: #64d2ff;
+}
+
+.pomodoro-ring[data-break='true'] .pomodoro-ring__value {
+  stroke: #30d158;
+}
+
+.pomodoro-time {
+  color: #fff;
+}
+
+.pomodoro-play {
+  color: #fff;
+  background: linear-gradient(180deg, #2f96ff, #0a7bf0);
+  box-shadow:
+    0 8px 18px -10px rgb(0 0 0 / 60%),
+    inset 0 1px 0 rgb(255 255 255 / 24%);
+}
+
+.pomodoro-play:hover {
+  background: linear-gradient(180deg, #4aa5ff, #188cf8);
+}
+
+.pomodoro-reset {
+  color: var(--ink-3);
+  background: rgb(255 255 255 / 7%);
+  border: 1px solid rgb(255 255 255 / 10%);
+}
+
+.pomodoro-reset:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 12%);
+}
+
+/* Quick search widget ------------------------------------------------------- */
+
+.search-widget__hint {
+  color: var(--ink-3);
+}
+
+/* Context menu -------------------------------------------------------------- */
+
+.context-menu {
+  background-color: rgb(44 46 52 / 96%);
+  border-color: rgb(255 255 255 / 12%);
+  border-radius: 10px;
+  box-shadow:
+    0 24px 60px -20px rgb(0 0 0 / 80%),
+    0 4px 14px rgb(0 0 0 / 35%),
+    inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.context-menu__label,
+.context-menu__path {
+  color: var(--ink-3);
+}
+
+.context-menu__item {
+  color: var(--ink-2);
+  border-radius: 5px;
+}
+
+.context-menu__item svg {
+  color: var(--ink-3);
+}
+
+.context-menu__item:hover {
+  color: #fff;
+  background: #0a84ff;
+}
+
+.context-menu__item:hover svg {
+  color: #fff;
+}
+
+.context-menu__item:disabled {
+  opacity: 0.4;
+}
+
+.context-menu__item--danger {
+  color: var(--danger);
+}
+
+.context-menu__sep {
+  background: rgb(255 255 255 / 9%);
+}
+
+/* Widget palette ------------------------------------------------------------ */
+
+.widget-palette {
+  background-color: rgb(40 42 48 / 96%);
+  border-color: rgb(255 255 255 / 12%);
+  border-radius: 12px;
+}
+
+.widget-palette__head {
+  color: var(--ink-3);
+}
+
+.widget-palette__item {
+  border-radius: 8px;
+}
+
+.widget-palette__item:hover {
+  background: rgb(255 255 255 / 8%);
+}
+
+.widget-palette__icon {
+  color: var(--ink-2);
+  background: rgb(255 255 255 / 7%);
+  border: 1px solid rgb(255 255 255 / 8%);
+}
+
+.widget-palette__title {
+  color: #fff;
+}
+
+.widget-palette__hint {
+  color: var(--ink-3);
+}
+
+/* Toasts -------------------------------------------------------------------- */
+
+.toast {
+  background-color: rgb(40 42 48 / 95%);
+  border-color: rgb(255 255 255 / 12%);
+  color: #f4f5f7;
+  box-shadow:
+    0 18px 40px -18px rgb(0 0 0 / 75%),
+    0 2px 8px rgb(0 0 0 / 30%);
+}
+
+.toast svg {
+  color: #64b5ff;
+}
+
+/* Modals -------------------------------------------------------------------- */
+
+.modal-scrim {
+  background: rgb(0 0 0 / 48%);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  backdrop-filter: blur(22px) saturate(1.15);
+}
+
+.modal {
+  background-color: rgb(28 29 34 / 97%);
+  border-color: rgb(255 255 255 / 13%);
+  border-radius: 14px;
+  box-shadow:
+    0 50px 120px -32px rgb(0 0 0 / 90%),
+    0 10px 30px rgb(0 0 0 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 9%);
+}
+
+.modal--confirm {
+  border-radius: 14px;
+}
+
+.modal__title {
+  color: #fff;
+}
+
+.modal__text {
+  color: var(--ink-2);
+}
+
+/* Settings window ----------------------------------------------------------- */
+
+.settings-sheet {
+  grid-template-columns: 208px minmax(0, 1fr);
+  grid-template-rows: 38px minmax(0, 1fr);
+  background-color: rgb(28 29 34 / 97%);
+  border-radius: 14px;
+}
+
+.settings-windowbar {
+  grid-column: 1 / -1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 14px;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+  background: rgb(255 255 255 / 3%);
+}
+
+.settings-windowbar .traffic-lights {
+  position: absolute;
+  top: 0;
+  left: 14px;
+  height: 38px;
+}
+
+.settings-windowbar__title {
+  color: rgb(255 255 255 / 62%);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.settings-nav {
+  grid-row: 2;
+  padding: 16px 10px;
+  border-right: 1px solid rgb(255 255 255 / 8%);
+  background: rgb(255 255 255 / 3%);
+}
+
+.settings-brand {
+  padding: 0 8px 14px;
+}
+
+.settings-brand__name {
+  color: #fff;
+}
+
+.settings-brand__meta {
+  color: var(--ink-3);
+}
+
+.settings-nav__item {
+  height: 32px;
+  color: var(--ink-2);
+}
+
+.settings-nav__item:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 6%);
+}
+
+.settings-nav__item[aria-current='page'] {
+  color: #fff;
+  background: rgb(10 132 255 / 20%);
+  box-shadow: none;
+}
+
+.settings-nav__item svg {
+  color: var(--ink-3);
+}
+
+.settings-nav__item[aria-current='page'] svg {
+  color: #64b5ff;
+}
+
+.settings-nav__footer {
+  color: var(--ink-3);
+}
+
+.settings-main {
+  grid-row: 2;
+  background: transparent;
+}
+
+.settings-head {
+  padding: 18px 24px 13px;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+}
+
+.settings-head h2 {
+  font-size: 17px;
+  color: #fff;
+}
+
+.settings-head p {
+  color: var(--ink-3);
+}
+
+.settings-body {
+  padding: 16px 24px 26px;
+}
+
+.settings-group {
+  padding: 14px 15px;
+  border-radius: 12px;
+  background: rgb(255 255 255 / 4%);
+  border: 1px solid rgb(255 255 255 / 6%);
+}
+
+.settings-group__title {
+  color: var(--ink-2);
+}
+
+.settings-row {
+  border-bottom-color: rgb(255 255 255 / 7%);
+}
+
+.settings-row__text h3 {
+  color: #fff;
+}
+
+.settings-row__text p {
+  color: var(--ink-3);
+}
+
+.wallpaper-swatch {
+  border-color: rgb(255 255 255 / 14%);
+  border-radius: 9px;
+  box-shadow: 0 4px 12px -4px rgb(0 0 0 / 55%);
+}
+
+.wallpaper-swatch[data-active='true'] {
+  box-shadow:
+    0 0 0 2px #0a84ff,
+    0 6px 16px -6px rgb(0 0 0 / 60%);
+}
+
+.wallpaper-swatch__label {
+  color: rgb(255 255 255 / 92%);
+  text-shadow: 0 1px 3px rgb(0 0 0 / 85%);
+}
+
+.desktop-admin__swatch {
+  border-color: rgb(255 255 255 / 16%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 18%);
+}
+
+.desktop-admin__name input {
+  color: #fff;
+}
+
+.settings-note {
+  color: var(--ink-3);
+}
+
+.engine-option {
+  border-color: rgb(255 255 255 / 8%);
+  background: rgb(255 255 255 / 3%);
+}
+
+.engine-option:hover {
+  background: rgb(255 255 255 / 7%);
+}
+
+.engine-option[data-active='true'] {
+  border-color: rgb(10 132 255 / 50%);
+  background: rgb(10 132 255 / 14%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+.engine-option__icon {
+  color: var(--ink-2);
+  background: rgb(255 255 255 / 7%);
+}
+
+.engine-option__name {
+  color: #fff;
+}
+
+.engine-option__hint {
+  color: var(--ink-3);
+}
+
+/* Onboarding ---------------------------------------------------------------- */
+
+.onboarding__brand span,
+.onboarding__bar-note {
+  color: #fff;
+  text-shadow: var(--wallpaper-shadow);
+}
+
+.onboarding__card {
+  background-color: rgb(27 28 33 / 95%);
+  border-color: rgb(255 255 255 / 13%);
+  border-radius: 18px;
+  box-shadow:
+    0 50px 120px -34px rgb(0 0 0 / 90%),
+    0 10px 30px rgb(0 0 0 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 9%);
+}
+
+.onboarding__intro {
+  border-right: 1px solid rgb(255 255 255 / 8%);
+  background:
+    radial-gradient(80% 60% at 10% 0%, rgb(255 255 255 / 5%), transparent 60%),
+    linear-gradient(155deg, rgb(255 255 255 / 3%), transparent 60%);
+}
+
+.onboarding__title {
+  color: #fff;
+}
+
+.onboarding__title em {
+  color: #64b5ff;
+}
+
+.onboarding__subtitle {
+  color: var(--ink-2);
+}
+
+.feature-line__icon {
+  color: var(--ink-2);
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 8%);
+}
+
+.feature-line h4 {
+  color: var(--ink-2);
+}
+
+.feature-line p {
+  color: var(--ink-3);
+}
+
+.onboarding__picker {
+  background: rgb(255 255 255 / 2%);
+}
+
+.onboarding__picker h2 {
+  color: #fff;
+}
+
+.onboarding__picker p,
+.onboarding__select-all,
+.onboarding__hint,
+.onboarding__bar-note {
+  color: var(--ink-3);
+}
+
+.onboarding__select-all button {
+  color: var(--ink-3);
+}
+
+.onboarding__select-all button:hover {
+  color: #fff;
+}
+
+.folder-list {
+  background: rgb(0 0 0 / 24%);
+  border: 1px solid rgb(255 255 255 / 7%);
+}
+
+.folder-option:hover {
+  background: rgb(255 255 255 / 5%);
+}
+
+.folder-option[data-selected='true'] {
+  background: rgb(10 132 255 / 14%);
+}
+
+.folder-option__title {
+  color: #fff;
+}
+
+.folder-option__path,
+.folder-option__count {
+  color: var(--ink-3);
+}
+
+.folder-option__icon {
+  color: #fff;
+  background: linear-gradient(160deg, #4a9eff, #0a63d8);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 30%);
+}
+
+.onboarding__empty {
+  background: rgb(255 255 255 / 4%);
+  border: 1px dashed rgb(255 255 255 / 14%);
+  box-shadow: none;
+}
+
+.onboarding__empty-icon {
+  color: #64b5ff;
+  background: rgb(255 255 255 / 6%);
+  border: 1px solid rgb(255 255 255 / 8%);
+}
+
+.onboarding__empty strong {
+  color: var(--ink-2);
+}
+
+.onboarding__empty p {
+  color: var(--ink-3);
+}
+
+/* Boot ---------------------------------------------------------------------- */
+
+.boot-screen {
+  background: #040507;
+}
+
+.boot-title {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 550;
+  letter-spacing: 0.02em;
+  text-shadow: none;
+}
+
+.boot-hint {
+  color: rgb(255 255 255 / 46%);
+  text-shadow: none;
+}
+
+.boot-skeleton {
+  width: 180px;
+  height: 4px;
+  background: rgb(255 255 255 / 14%);
+}
+
+.boot-mark {
+  box-shadow: 0 18px 44px -20px rgb(0 0 0 / 80%);
+}
+
+/* Error --------------------------------------------------------------------- */
+
+.error-card {
+  background-color: rgb(28 29 34 / 97%);
+}
+
+.error-card__icon {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.error-card h1 {
+  color: #fff;
+}
+
+.error-card p {
+  color: var(--ink-2);
+}
+
+/* Small screens ------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .settings-sheet {
+    grid-template-columns: 1fr;
+    grid-template-rows: 38px auto minmax(0, 1fr);
+  }
+
+  .settings-windowbar {
+    grid-column: 1;
+  }
+
+  .settings-nav {
+    grid-row: 2;
+    flex-direction: row;
+    padding: 8px 10px;
+    border-right: 0;
+    border-bottom: 1px solid rgb(255 255 255 / 8%);
+    background: rgb(255 255 255 / 3%);
+  }
+
+  .settings-main {
+    grid-row: 3;
+  }
+
+  .settings-head {
+    padding: 14px 18px 11px;
+  }
+
+  .settings-body {
+    padding: 12px 18px 20px;
+  }
+}
+
+@media (max-width: 620px) {
+  .modal {
+    border-radius: 14px;
+  }
+
+  .onboarding__intro {
+    border-bottom: 1px solid rgb(255 255 255 / 8%);
+  }
+
+  .settings-windowbar {
+    height: 36px;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Glass intensity                                                            */
+/* -------------------------------------------------------------------------- */
+
+[data-glass='low'] .widget--glass {
+  background-color: rgb(34 36 42 / 90%);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+}
+
+[data-glass='high'] .widget--glass {
+  background-color: rgb(34 36 42 / 56%);
+  -webkit-backdrop-filter: blur(46px) saturate(1.9);
+  backdrop-filter: blur(46px) saturate(1.9);
+}
+
+[data-glass='low'] .dock {
+  background-color: rgb(24 27 34 / 78%);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+}
+
+[data-glass='high'] .dock {
+  background-color: rgb(24 27 34 / 44%);
+  -webkit-backdrop-filter: blur(44px) saturate(2);
+  backdrop-filter: blur(44px) saturate(2);
+}
+
+[data-glass='low'] .status-bar {
+  background: linear-gradient(to bottom, rgb(8 11 18 / 74%), rgb(8 11 18 / 44%));
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+}
+
+[data-glass='high'] .status-bar {
+  background: linear-gradient(to bottom, rgb(8 11 18 / 32%), rgb(8 11 18 / 14%));
+  -webkit-backdrop-filter: blur(44px) saturate(1.9);
+  backdrop-filter: blur(44px) saturate(1.9);
+}
+
+[data-glass='low'] .island-shell[data-open='true'] {
+  background-color: rgb(29 31 36 / 98%);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+}
+
+[data-glass='high'] .island-shell[data-open='true'] {
+  background-color: rgb(29 31 36 / 88%);
+  -webkit-backdrop-filter: blur(46px) saturate(1.9);
+  backdrop-filter: blur(46px) saturate(1.9);
+}
+
+[data-glass='low'] .modal,
+[data-glass='low'] .settings-sheet {
+  background-color: rgb(28 29 34 / 99%);
+}
+
+[data-glass='high'] .modal,
+[data-glass='high'] .settings-sheet {
+  background-color: rgb(28 29 34 / 90%);
+}

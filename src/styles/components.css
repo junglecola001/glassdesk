@@ -7,26 +7,30 @@
 }
 
 .clock-time {
-  color: var(--ink);
-  font-size: clamp(64px, 7.4vw, 98px);
-  font-weight: 200;
+  color: #fff;
+  font-size: clamp(60px, 6.2vw, 90px);
+  font-weight: 240;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.055em;
   line-height: 0.94;
-  text-shadow: 0 1px 0 rgb(255 255 255 / 38%);
+  text-shadow:
+    0 2px 4px rgb(6 5 26 / 32%),
+    0 14px 44px rgb(6 5 26 / 26%);
 }
 
 .clock-meta {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 15px;
-  color: var(--ink-2);
+  margin-top: 13px;
+  color: rgb(248 250 255 / 84%);
   font-size: 13px;
   line-height: 1.4;
+  text-shadow: var(--wallpaper-shadow);
 }
 
 .clock-date {
+  color: rgb(250 251 255 / 88%);
   font-weight: 540;
   white-space: nowrap;
 }
@@ -34,17 +38,17 @@
 .clock-sep {
   width: 1px;
   height: 12px;
-  background: rgb(90 102 126 / 22%);
+  background: rgb(255 255 255 / 34%);
   flex: none;
 }
 
 .clock-greeting {
-  color: var(--ink-2);
+  color: rgb(248 249 255 / 72%);
 }
 
 .clock-sub {
   margin-top: 5px;
-  color: var(--ink-3);
+  color: var(--wallpaper-ink-2);
   font-size: 11.5px;
   letter-spacing: 0.005em;
 }
@@ -54,22 +58,34 @@
 /* -------------------------------------------------------------------------- */
 
 .widget--note {
-  background: linear-gradient(157deg, rgb(255 253 247 / 78%), rgb(255 255 255 / 48%));
-  --note-accent: #c9b78f;
+  background-color: rgb(247 249 255 / 56%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 42%) 0%, rgb(255 255 255 / 6%) 50%, transparent 72%),
+    linear-gradient(205deg, rgb(202 219 255 / 14%), rgb(235 226 255 / 12%));
+  --note-accent: #a9b8d6;
 }
 
 .widget--note[data-note-color='apricot'] {
-  background: linear-gradient(157deg, rgb(255 247 238 / 82%), rgb(255 255 255 / 48%));
+  background-color: rgb(255 250 244 / 60%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 44%) 0%, rgb(255 246 236 / 10%) 50%, transparent 72%),
+    linear-gradient(205deg, rgb(255 220 190 / 18%), rgb(255 240 224 / 12%));
   --note-accent: #d9a271;
 }
 
 .widget--note[data-note-color='mint'] {
-  background: linear-gradient(157deg, rgb(244 252 247 / 80%), rgb(255 255 255 / 46%));
+  background-color: rgb(246 253 250 / 58%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 44%) 0%, rgb(240 252 246 / 8%) 50%, transparent 72%),
+    linear-gradient(205deg, rgb(196 236 218 / 18%), rgb(230 246 240 / 12%));
   --note-accent: #92bca4;
 }
 
 .widget--note[data-note-color='lilac'] {
-  background: linear-gradient(157deg, rgb(248 246 255 / 82%), rgb(255 255 255 / 46%));
+  background-color: rgb(250 248 255 / 58%);
+  background-image:
+    linear-gradient(160deg, rgb(255 255 255 / 44%) 0%, rgb(247 243 255 / 8%) 50%, transparent 72%),
+    linear-gradient(205deg, rgb(218 210 255 / 18%), rgb(240 236 255 / 12%));
   --note-accent: #a3a0d2;
 }
 
@@ -80,6 +96,7 @@
 
 .note-widget {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 8px;
   width: 100%;
@@ -136,9 +153,9 @@
 
 .note-tab[data-active='true'] {
   color: var(--ink);
-  background: rgb(255 255 255 / 72%);
-  border-color: rgb(255 255 255 / 74%);
-  box-shadow: 0 1px 4px rgb(46 58 84 / 5%);
+  background: rgb(255 255 255 / 76%);
+  border-color: rgb(255 255 255 / 76%);
+  box-shadow: 0 1px 4px rgb(20 24 60 / 6%);
 }
 
 .note-tab__dot {
@@ -175,9 +192,10 @@
   background: transparent;
   outline: none;
   color: var(--ink);
-  font-size: 14px;
-  font-weight: 620;
-  letter-spacing: -0.005em;
+  font-size: 15px;
+  font-weight: 640;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 28%);
 }
 
 .note-title::placeholder {
@@ -187,7 +205,7 @@
 
 .note-body {
   flex: 1;
-  min-height: 72px;
+  min-height: 76px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -241,7 +259,7 @@
 }
 
 .note-color[data-swatch='paper'] {
-  --swatch: #d9c9a8;
+  --swatch: #c6cede;
 }
 
 .note-color[data-swatch='apricot'] {
@@ -300,6 +318,124 @@
 /* Countdown                                                                   */
 /* -------------------------------------------------------------------------- */
 
+.widget[data-widget-type='countdown'] {
+  border-color: rgb(255 255 255 / 34%);
+  background-color: rgb(86 108 238 / 66%);
+  background-image:
+    radial-gradient(120% 100% at 88% 0%, rgb(176 214 255 / 52%), transparent 58%),
+    linear-gradient(165deg, rgb(116 144 255 / 64%), rgb(68 80 205 / 60%));
+  box-shadow:
+    0 34px 64px -36px rgb(4 4 30 / 82%),
+    0 3px 12px rgb(4 4 30 / 12%),
+    inset 0 1px 0 rgb(255 255 255 / 42%);
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .widget__title {
+  color: rgb(255 255 255 / 74%);
+}
+
+.widget[data-widget-type='countdown'] .widget__action {
+  color: rgb(255 255 255 / 72%);
+}
+
+.widget[data-widget-type='countdown'] .widget__action:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 16%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-title {
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .countdown-switcher {
+  border-color: rgb(255 255 255 / 20%);
+  background-color: rgb(255 255 255 / 14%);
+  background-image: url("data:image/svg+xml,%3Csvg width='9' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23ffffff' stroke-opacity='.7' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+  color: rgb(255 255 255 / 92%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-switcher option {
+  color: var(--ink);
+}
+
+.widget[data-widget-type='countdown'] .countdown-icon-button {
+  color: rgb(255 255 255 / 72%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-icon-button:hover {
+  color: #fff;
+  background: rgb(255 255 255 / 16%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-days {
+  color: #fff;
+  font-weight: 250;
+  text-shadow: 0 2px 16px rgb(20 30 110 / 26%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-days-label {
+  color: rgb(255 255 255 / 64%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-clock {
+  background: rgb(255 255 255 / 16%);
+  color: rgb(255 255 255 / 94%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-clock--expired {
+  background: rgb(255 255 255 / 22%);
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .countdown-target {
+  color: rgb(255 255 255 / 62%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-progress {
+  background: rgb(255 255 255 / 20%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-progress i {
+  background: rgb(255 255 255 / 92%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-footer__text {
+  color: rgb(255 255 255 / 62%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-complete {
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .btn--glass {
+  color: #fff;
+  background: rgb(255 255 255 / 16%);
+  border-color: rgb(255 255 255 / 24%);
+}
+
+.widget[data-widget-type='countdown'] .btn--glass:hover {
+  background: rgb(255 255 255 / 24%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-form .btn--primary {
+  color: var(--accent-deep);
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 8px 18px -12px rgb(10 16 60 / 45%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-empty {
+  color: rgb(255 255 255 / 68%);
+}
+
+.widget[data-widget-type='countdown'] .countdown-empty strong {
+  color: #fff;
+}
+
+.widget[data-widget-type='countdown'] .countdown-error {
+  color: #ffe3de;
+}
+
 .countdown-widget {
   display: flex;
   flex-direction: column;
@@ -320,7 +456,7 @@
   padding: 0 24px 0 8px;
   border: 1px solid rgb(255 255 255 / 54%);
   border-radius: 8px;
-  background: rgb(255 255 255 / 38%);
+  background-color: rgb(255 255 255 / 38%);
   background-image: url("data:image/svg+xml,%3Csvg width='9' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%237c8393' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 8px center;
@@ -355,12 +491,12 @@
 }
 
 .countdown-days {
-  font-size: 45px;
-  font-weight: 260;
+  color: var(--ink);
+  font-size: 50px;
+  font-weight: 250;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.045em;
   line-height: 0.9;
-  color: var(--ink);
 }
 
 .countdown-days-label {
@@ -409,14 +545,14 @@
   overflow: hidden;
   height: 3px;
   border-radius: 999px;
-  background: rgb(100 110 130 / 12%);
+  background: rgb(72 82 122 / 14%);
 }
 
 .countdown-progress i {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, rgb(100 136 200 / 70%), var(--accent));
+  background: linear-gradient(90deg, rgb(124 140 255 / 70%), var(--accent));
   transition: width 1s linear;
 }
 
@@ -669,7 +805,8 @@
   z-index: var(--z-popover);
   width: 232px;
   padding: 6px;
-  border-radius: 16px;
+  border-radius: 14px;
+  background-color: rgb(250 251 255 / 90%);
   animation: menu-in 140ms var(--ease-out) both;
 }
 
@@ -742,12 +879,13 @@
 
 .widget-palette {
   position: fixed;
-  bottom: 108px;
+  bottom: 112px;
   left: 50%;
   z-index: var(--z-popover);
   width: min(344px, calc(100vw - 32px));
   padding: 7px;
   border-radius: 20px;
+  background-color: rgb(250 251 255 / 90%);
   transform: translateX(-50%);
   animation: menu-in 160ms var(--ease-out) both;
 }
@@ -834,12 +972,13 @@
   gap: 9px;
   padding: 8px 14px;
   border-radius: var(--radius-pill);
+  background-color: rgb(250 251 255 / 88%);
   color: var(--ink);
   font-size: 12px;
   line-height: 1.4;
   box-shadow:
-    0 18px 40px -24px rgb(38 49 74 / 45%),
-    0 2px 8px rgb(38 49 74 / 6%);
+    0 18px 40px -24px rgb(5 4 26 / 70%),
+    0 2px 8px rgb(5 4 26 / 10%);
   animation: toast-in 200ms var(--ease-out) both;
   pointer-events: auto;
 }
@@ -868,9 +1007,9 @@
   display: grid;
   place-items: center;
   padding: 24px;
-  background: rgb(233 237 245 / 32%);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  backdrop-filter: blur(16px) saturate(1.2);
+  background: rgb(6 5 24 / 46%);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  backdrop-filter: blur(22px) saturate(1.15);
   animation: scrim-in 180ms var(--ease-out) both;
 }
 
@@ -878,6 +1017,12 @@
   width: min(900px, calc(100vw - 48px));
   max-height: min(680px, calc(100dvh - 64px));
   border-radius: 26px;
+  background-color: rgb(249 250 255 / 92%);
+  border-color: rgb(255 255 255 / 62%);
+  box-shadow:
+    0 50px 120px -50px rgb(4 3 20 / 80%),
+    0 8px 30px rgb(4 3 20 / 18%),
+    var(--glass-inner);
   animation: modal-in 260ms var(--ease-out) both;
 }
 
@@ -1335,14 +1480,17 @@
 }
 
 .onboarding__brand span {
+  color: #fff;
   font-size: 12.5px;
   font-weight: 620;
   letter-spacing: 0.015em;
+  text-shadow: var(--wallpaper-shadow);
 }
 
 .onboarding__bar-note {
-  color: var(--ink-3);
+  color: rgb(244 246 255 / 68%);
   font-size: 11px;
+  text-shadow: var(--wallpaper-shadow);
 }
 
 .onboarding__stage {
@@ -1360,6 +1508,12 @@
   max-height: min(720px, calc(100dvh - 120px));
   overflow: hidden;
   border-radius: 30px;
+  background-color: rgb(249 250 255 / 88%);
+  border-color: rgb(255 255 255 / 58%);
+  box-shadow:
+    0 50px 120px -50px rgb(4 3 20 / 75%),
+    0 8px 30px rgb(4 3 20 / 16%),
+    var(--glass-inner);
   animation: modal-in 480ms var(--ease-out) both;
 }
 
@@ -1648,18 +1802,20 @@
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  box-shadow: 0 20px 36px -22px rgb(46 58 84 / 50%);
+  box-shadow: 0 24px 50px -24px rgb(2 2 16 / 80%);
 }
 
 .boot-title {
-  color: var(--ink);
+  color: #fff;
   font-size: 14px;
   font-weight: 600;
+  text-shadow: var(--wallpaper-shadow);
 }
 
 .boot-hint {
-  color: var(--ink-3);
+  color: rgb(244 246 255 / 62%);
   font-size: 11px;
+  text-shadow: var(--wallpaper-shadow);
 }
 
 .boot-skeleton {
@@ -1667,7 +1823,7 @@
   height: 5px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgb(255 255 255 / 36%);
+  background: rgb(255 255 255 / 18%);
 }
 
 .boot-skeleton::after {

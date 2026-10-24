@@ -1,6 +1,7 @@
 import type { BookmarkNode } from '../types/bookmark';
 import { normalizeChromeTree } from '../features/bookmarks/tree';
 import { DEMO_BOOKMARK_TREE } from './demo-data';
+import { localFavicon } from '../utils/site-icons';
 
 export function isExtensionEnvironment(): boolean {
   return (
@@ -81,4 +82,28 @@ export function openUrl(url: string, newTab = false): void {
     return;
   }
   window.location.assign(url);
+}
+
+/**
+ * Extension builds read favicons from Chrome's local cache, so the new tab
+ * still works offline. The Vite preview has no cached favicons, so it falls
+ * back to a public service to keep the demo recognizable.
+ */
+export function faviconUrl(url: string | null | undefined, size = 64): string | null {
+  if (!url) return null;
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return null;
+  }
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return null;
+  const local = localFavicon(parsed.hostname);
+  if (local) return local;
+  if (isExtensionPage()) {
+    return chrome.runtime.getURL(
+      `/_favicon/?pageUrl=${encodeURIComponent(url)}&size=${size}`,
+    );
+  }
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(parsed.hostname)}&sz=${size}`;
 }

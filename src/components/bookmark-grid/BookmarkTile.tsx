@@ -1,6 +1,7 @@
 import type { CSSProperties, DragEvent, KeyboardEvent, MouseEvent } from 'react';
 import { WarningCircle } from '@phosphor-icons/react';
 import type { BookmarkView } from '../../stores/desktop-store';
+import { useFavicon } from '../../hooks/use-favicon';
 import { siteHue, siteLetter } from '../../utils/url';
 
 interface BookmarkTileProps {
@@ -29,6 +30,8 @@ export function BookmarkTile({
   onContextMenu,
 }: BookmarkTileProps) {
   const hue = siteHue(view.url, view.title);
+  const favicon = useFavicon(view.missing ? null : view.url, 128);
+  const hasFavicon = Boolean(favicon.src && !favicon.failed);
 
   function openMenuFromKeyboard(event: KeyboardEvent<HTMLElement>) {
     if (event.key !== 'ContextMenu' && !(event.shiftKey && event.key === 'F10')) return;
@@ -58,8 +61,36 @@ export function BookmarkTile({
 
   const content = (
     <>
-      <span className="bookmark-icon" style={{ '--tile-hue': hue } as CSSProperties}>
-        {view.missing ? <WarningCircle size={20} weight="fill" /> : siteLetter(view.title, view.url)}
+      <span
+        className={`bookmark-icon${favicon.loaded ? ' bookmark-icon--favicon' : ''}`}
+        style={{ '--tile-hue': hue } as CSSProperties}
+      >
+        {view.missing ? (
+          <WarningCircle size={20} weight="fill" />
+        ) : (
+          <>
+            {favicon.loaded ? null : siteLetter(view.title, view.url)}
+            {hasFavicon ? (
+              <img
+                className={`bookmark-favicon${favicon.loaded ? ' is-ready' : ''}`}
+                src={favicon.src ?? undefined}
+                alt=""
+                width={40}
+                height={40}
+                draggable={false}
+                decoding="async"
+                referrerPolicy="no-referrer"
+                onLoad={favicon.onLoad}
+                onError={favicon.onError}
+              />
+            ) : null}
+          </>
+        )}
+        {!view.missing ? (
+          <span className="bookmark-badge" aria-hidden="true">
+            ↗
+          </span>
+        ) : null}
       </span>
       <span className="bookmark-label">{view.title}</span>
       {pinned ? <span className="bookmark-pin" aria-hidden="true" /> : null}

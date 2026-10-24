@@ -96,9 +96,9 @@ interface DemoFolder {
 }
 
 const DEMO_FOLDERS: DemoFolder[] = [
-  { id: 'demo-work', name: '工作', wallpaper: 'sunrise' },
-  { id: 'demo-design', name: '设计', wallpaper: 'mint' },
-  { id: 'demo-read', name: '阅读', wallpaper: 'dusk' },
+  { id: 'demo-work', name: '工作', wallpaper: 'dusk' },
+  { id: 'demo-design', name: '设计', wallpaper: 'sunrise' },
+  { id: 'demo-read', name: '阅读', wallpaper: 'mint' },
   { id: 'demo-tools', name: '工具', wallpaper: 'paper' },
 ];
 
@@ -165,8 +165,8 @@ export function createDemoSeed(
 
   const settings = createDefaultSettings({
     onboarded: true,
-    defaultWallpaper: 'sunrise',
-    dockPinnedBookmarkIds: ['demo-linear', 'demo-figma', 'demo-sspai', 'demo-excalidraw'],
+    defaultWallpaper: 'dusk',
+    dockPinnedBookmarkIds: [],
     schemaVersion: SCHEMA_VERSION,
   });
 

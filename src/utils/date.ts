@@ -17,12 +17,28 @@ const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
   weekday: 'long',
 });
 
+const menuDateFormatter = new Intl.DateTimeFormat('zh-CN', {
+  month: 'long',
+  day: 'numeric',
+  weekday: 'short',
+});
+
 export function formatClock(date: Date, withSeconds = false): string {
   return (withSeconds ? secondsFormatter : clockFormatter).format(date);
 }
 
 export function formatDate(date: Date): string {
   return dateFormatter.format(date);
+}
+
+export function formatMenuDate(date: Date): string {
+  const parts = menuDateFormatter.formatToParts(date);
+  const monthDay = parts
+    .filter((part) => part.type === 'month' || part.type === 'day' || part.type === 'literal')
+    .map((part) => part.value)
+    .join('');
+  const weekday = parts.find((part) => part.type === 'weekday')?.value ?? '';
+  return `${monthDay} ${weekday}`.trim();
 }
 
 export function greetingForHour(hour: number): string {

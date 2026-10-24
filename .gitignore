@@ -10,3 +10,6 @@ playwright-report/
 .DS_Store
 Thumbs.db
 .artifacts/
+
+glassdesk-extension.zip
+glassdesk-extension.zip.sha256

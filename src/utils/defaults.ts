@@ -17,7 +17,7 @@ export function createDefaultSettings(overrides: Partial<AppSettings> = {}): App
     bookmarkSyncMode: 'follow',
     dockAutoHide: false,
     searchEngine: DEFAULT_SEARCH_ENGINE,
-    defaultWallpaper: 'sunrise',
+    defaultWallpaper: 'dusk',
     dockPinnedBookmarkIds: [],
     showDesktopDots: true,
     onboarded: false,

@@ -56,7 +56,7 @@ export function WidgetFrame({
         document.documentElement.dataset.motion === 'reduced' ||
         window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       frameRef.current?.scrollIntoView({
-        block: 'center',
+        block: 'nearest',
         behavior: reduceMotion ? 'auto' : 'smooth',
       });
       setFlash(true);

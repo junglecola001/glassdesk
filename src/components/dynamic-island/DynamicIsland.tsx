@@ -3,7 +3,6 @@ import type { CSSProperties, KeyboardEvent as ReactKeyboardEvent } from 'react';
 import {
   ArrowRight,
   DownloadSimple,
-  Hourglass,
   Keyboard,
   MagnifyingGlass,
   Monitor,
@@ -20,12 +19,9 @@ import {
   searchDesktops,
 } from '../../features/search/search';
 import { openUrl } from '../../services/browser-api';
+import { useFavicon } from '../../hooks/use-favicon';
 import { useStore } from '../../stores/create-store';
-import {
-  setActiveDesktop,
-  useCountdowns,
-  workspaceStore,
-} from '../../stores/desktop-store';
+import { setActiveDesktop, workspaceStore } from '../../stores/desktop-store';
 import { useSettings, patchSettings } from '../../stores/settings-store';
 import {
   setSearchOpen,
@@ -33,15 +29,41 @@ import {
   uiStore,
   type SettingsSection,
 } from '../../stores/ui-store';
-import { formatCountdownShort } from '../../utils/date';
 import { modifierLabel } from '../../utils/events';
 import { isLikelyUrl, prettyUrl, siteHue, siteLetter } from '../../utils/url';
-import { useNow } from '../../hooks/use-now';
 
 type IslandRow =
   | { kind: 'bookmark'; meta: BookmarkMeta }
   | { kind: 'desktop'; desktop: Desktop }
   | { kind: 'query' };
+
+function IslandSiteIcon({ url, title }: { url: string; title: string }) {
+  const favicon = useFavicon(url, 64);
+  const hue = siteHue(url, title);
+  const hasFavicon = Boolean(favicon.src && !favicon.failed);
+  return (
+    <span
+      className={`island-row__icon island-row__icon--site${favicon.loaded ? ' island-row__icon--favicon' : ''}`}
+      style={{ '--tile-hue': hue } as CSSProperties}
+    >
+      {favicon.loaded ? null : siteLetter(title, url)}
+      {hasFavicon ? (
+        <img
+          className={`island-row__favicon${favicon.loaded ? ' is-ready' : ''}`}
+          src={favicon.src ?? undefined}
+          alt=""
+          width={30}
+          height={30}
+          draggable={false}
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onLoad={favicon.onLoad}
+          onError={favicon.onError}
+        />
+      ) : null}
+    </span>
+  );
+}
 
 const QUICK_ACTIONS: Array<{
   section: SettingsSection;
@@ -70,8 +92,6 @@ export function DynamicIsland() {
       path: entry.path,
     }));
   });
-  const countdowns = useCountdowns();
-  const now = useNow(60_000);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,12 +100,6 @@ export function DynamicIsland() {
 
   const engine = getSearchEngine(settings.searchEngine);
   const trimmedQuery = query.trim();
-  const nextCountdown = useMemo(() => {
-    return countdowns
-      .filter((countdown) => !countdown.completed && countdown.targetTime > now.getTime())
-      .sort((a, b) => a.targetTime - b.targetTime)[0];
-  }, [countdowns, now]);
-
   const bookmarkHits = useMemo(
     () => (trimmedQuery ? searchBookmarks(trimmedQuery, bookmarks, 7) : []),
     [trimmedQuery, bookmarks],
@@ -238,11 +252,6 @@ export function DynamicIsland() {
                 <X size={14} />
               </button>
             </>
-          ) : nextCountdown ? (
-            <span className="island__chip" title={nextCountdown.title}>
-              <Hourglass size={11} weight="bold" aria-hidden />
-              {formatCountdownShort(nextCountdown.targetTime - now.getTime())}
-            </span>
           ) : (
             <span className="kbd">{modifierLabel()} K</span>
           )}
@@ -290,7 +299,6 @@ export function DynamicIsland() {
                   }
                   if (row.kind === 'bookmark') {
                     const position = index;
-                    const hue = siteHue(row.meta.url, row.meta.title);
                     return (
                       <button
                         key={`bookmark-${row.meta.id}`}
@@ -305,9 +313,7 @@ export function DynamicIsland() {
                         onMouseEnter={() => setSelected(position)}
                         onClick={() => executeRow(row, false)}
                       >
-                        <span className="island-row__icon island-row__icon--site" style={{ '--tile-hue': hue } as CSSProperties}>
-                          {siteLetter(row.meta.title, row.meta.url)}
-                        </span>
+                        <IslandSiteIcon url={row.meta.url} title={row.meta.title} />
                         <span className="island-row__text">
                           <span className="island-row__title">{row.meta.title}</span>
                           <span className="island-row__meta">

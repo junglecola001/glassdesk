@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNow } from '../../hooks/use-now';
+import { formatClock, formatMenuDate } from '../../utils/date';
 import { useMediaQuery } from '../../hooks/use-media-query';
 import {
   setActiveDesktop,
@@ -14,6 +16,7 @@ import { DesktopTabs } from './DesktopTabs';
 
 export function DesktopStage() {
   const compact = useMediaQuery('(max-width: 1040px)');
+  const now = useNow(30_000);
   const desktop = useActiveDesktop();
   const widgets = useActiveWidgets();
   const workspace = useWorkspace();
@@ -123,10 +126,24 @@ export function DesktopStage() {
   if (!desktop) return null;
 
   const clockWidget = widgets.find((widget) => widget.type === 'clock');
+  const widgetBottom = widgets.reduce(
+    (max, widget) => Math.max(max, widget.y + widget.height),
+    0,
+  );
+  const panelMinHeight =
+    !compact && widgetBottom > 0
+      ? `max(calc(100dvh - 240px), ${Math.round(widgetBottom + 96)}px)`
+      : undefined;
+
   return (
     <div className="desktop-stage" ref={stageRef}>
       <div className={`desk-canvas${compact ? ' desk-canvas--compact' : ''}`} ref={canvasRef}>
-        <div className="desk-panel" key={desktop.id} data-enter={entering ?? undefined}>
+        <div
+          className="desk-panel"
+          key={desktop.id}
+          data-enter={entering ?? undefined}
+          style={{ minHeight: panelMinHeight }}
+        >
           {compact ? (
             <div className="desk-compact-head">
               {clockWidget ? (
@@ -137,7 +154,10 @@ export function DesktopStage() {
                   canvasHeight={canvasSize.height}
                 />
               ) : (
-                <span />
+                <div className="compact-clock">
+                  <strong>{formatClock(now)}</strong>
+                  <span>{formatMenuDate(now)}</span>
+                </div>
               )}
               <DesktopTabs />
             </div>

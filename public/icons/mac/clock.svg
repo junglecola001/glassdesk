@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#ffffff"/><stop offset="1" stop-color="#d9dde6"/>
+    </linearGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <rect x="12" y="12" width="232" height="232" rx="54" fill="url(#g)"/>
+  <rect x="13" y="13" width="230" height="230" rx="53" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+  <circle cx="128" cy="128" r="80" fill="#fff" stroke="#c6cbd6" stroke-width="3" filter="url(#s)"/>
+  <g stroke="#2c2c2e" stroke-width="6" stroke-linecap="round">
+    <path d="M128 62v12M128 182v12M62 128h12M182 128h12"/>
+    <path d="M82 82l8 8M166 166l8 8M174 82l-8 8M90 166l-8 8" opacity=".45"/>
+  </g>
+  <path d="M128 128V82" stroke="#1c1c1e" stroke-width="8" stroke-linecap="round"/>
+  <path d="M128 128l32 22" stroke="#0a84ff" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="128" cy="128" r="7" fill="#ff9f0a"/>
+</svg>

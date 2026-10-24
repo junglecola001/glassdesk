@@ -94,6 +94,19 @@ export function SettingsSheet() {
       label="GlassDesk 设置"
       className="settings-sheet"
     >
+      <div className="settings-windowbar">
+        <div className="traffic-lights">
+          <button
+            type="button"
+            className="traffic-light traffic-light--close"
+            aria-label="关闭设置"
+            onClick={() => setSettingsOpen(false)}
+          />
+          <span className="traffic-light traffic-light--min" aria-hidden="true" />
+          <span className="traffic-light traffic-light--max" aria-hidden="true" />
+        </div>
+        <span className="settings-windowbar__title">设置</span>
+      </div>
       <aside className="settings-nav">
         <div className="settings-brand">
           <img src="/icons/icon-48.png" alt="" width={30} height={30} />
@@ -168,7 +181,7 @@ function AppearanceSection({ activeDesktop }: { activeDesktop: Desktop | null })
               type="button"
               className="wallpaper-swatch"
               data-active={wallpaperId === wallpaper.id}
-              style={{ background: wallpaper.background }}
+              style={{ background: wallpaper.thumbnail }}
               aria-label={wallpaper.name}
               title={`${wallpaper.name} · ${wallpaper.description}`}
               disabled={!activeDesktop}

@@ -18,7 +18,7 @@ test('desktop switching and search island work', async ({ page }) => {
   await page.mouse.wheel(-120, 0);
   await expect(page.locator('.status-desktop')).toHaveText('工作');
 
-  await page.locator('.island__input').click();
+  await page.locator('.status-action[aria-label="搜索"]').click();
   const shell = page.locator('.island-shell');
   await expect(shell).toHaveAttribute('data-open', 'true');
   await page.locator('.island__input').fill('fig');

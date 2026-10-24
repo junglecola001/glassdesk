@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "A light liquid-glass desktop that turns your bookmarks into a new tab.",
+  "description": "A dark macOS-style new tab that turns bookmarks into switchable desktops.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
@@ -36,5 +36,10 @@
   },
   "engines": {
     "node": ">=20.19"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/junglecola001/glassdesk.git"
+  },
+  "homepage": "https://github.com/junglecola001/glassdesk#readme"
 }

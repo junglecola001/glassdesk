@@ -1,17 +1,17 @@
 import type { WidgetInstance, WidgetType } from '../../types/widget';
 import { createId } from '../../utils/id';
 
-export const CANVAS_MAX_WIDTH = 1320;
-export const CANVAS_PADDING = 56;
+export const CANVAS_MAX_WIDTH = 3840;
+export const CANVAS_PADDING = 20;
 export const RAIL_WIDTH = 300;
 export const COMPACT_BREAKPOINT = 1040;
 
 const DEFAULT_SIZES: Record<WidgetType, { width: number; height: number }> = {
-  clock: { width: 480, height: 158 },
-  note: { width: 300, height: 262 },
-  countdown: { width: 300, height: 226 },
+  clock: { width: 300, height: 170 },
+  note: { width: 300, height: 280 },
+  countdown: { width: 300, height: 252 },
   pomodoro: { width: 300, height: 252 },
-  search: { width: 360, height: 132 },
+  search: { width: 300, height: 132 },
 };
 
 export interface ViewportSize {
@@ -61,34 +61,17 @@ function baseWidget(
 export function createWidget(
   type: WidgetType,
   desktopId: string,
-  viewport: ViewportSize,
+  _viewport: ViewportSize,
   existing: WidgetInstance[],
 ): WidgetInstance | null {
   if (type === 'clock' && existing.some((widget) => widget.type === 'clock')) return null;
   const zIndex = nextZIndex(existing);
-  const width = canvasWidthFor(viewport.width);
-  const railX = Math.max(CANVAS_PADDING, width - CANVAS_PADDING - RAIL_WIDTH);
-  let x = railX;
-  let y = 20;
-  if (type === 'clock') {
-    x = CANVAS_PADDING;
-    y = 20;
-  } else if (type === 'search') {
-    x = Math.max(CANVAS_PADDING, width - CANVAS_PADDING - DEFAULT_SIZES.search.width);
-    const railWidgets = existing.filter((widget) => widget.type !== 'clock');
-    const bottom = railWidgets.reduce(
-      (max, widget) => Math.max(max, widget.y + widget.height),
-      0,
-    );
-    y = railWidgets.length > 0 ? bottom + 14 : 20;
-  } else {
-    const railWidgets = existing.filter((widget) => widget.type !== 'clock');
-    const bottom = railWidgets.reduce(
-      (max, widget) => Math.max(max, widget.y + widget.height),
-      0,
-    );
-    y = railWidgets.length > 0 ? bottom + 14 : 20;
-  }
+  const x = CANVAS_PADDING;
+  const bottom = existing.reduce(
+    (max, widget) => Math.max(max, widget.y + widget.height),
+    0,
+  );
+  const y = existing.length > 0 ? bottom + 14 : 16;
 
   if (type === 'clock') {
     return { ...baseWidget(type, desktopId, x, y, zIndex), type: 'clock', settings: { showGreeting: true } };
@@ -111,31 +94,24 @@ export function createWidget(
 
 export function createDefaultWidgetsForDesktop(
   desktopId: string,
-  viewport: ViewportSize,
+  _viewport: ViewportSize,
   options: { includePomodoro?: boolean } = {},
 ): WidgetInstance[] {
-  const width = canvasWidthFor(viewport.width);
-  const railX = Math.max(CANVAS_PADDING, width - CANVAS_PADDING - RAIL_WIDTH);
   const widgets: WidgetInstance[] = [
     {
-      ...baseWidget('clock', desktopId, CANVAS_PADDING, 20, 1),
-      type: 'clock',
-      settings: { showGreeting: true },
-    },
-    {
-      ...baseWidget('note', desktopId, railX, 20, 2),
+      ...baseWidget('note', desktopId, CANVAS_PADDING, 16, 1),
       type: 'note',
       settings: { noteId: null },
     },
     {
-      ...baseWidget('countdown', desktopId, railX, 298, 3),
+      ...baseWidget('countdown', desktopId, CANVAS_PADDING, 310, 2),
       type: 'countdown',
       settings: { countdownId: null },
     },
   ];
   if (options.includePomodoro) {
     widgets.push({
-      ...baseWidget('pomodoro', desktopId, railX, 540, 4),
+      ...baseWidget('pomodoro', desktopId, CANVAS_PADDING, 576, 3),
       type: 'pomodoro',
       settings: {},
     });

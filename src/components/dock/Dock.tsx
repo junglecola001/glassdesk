@@ -1,24 +1,11 @@
 import { useEffect, useRef } from 'react';
 import type { CSSProperties } from 'react';
-import {
-  GearSix,
-  Hourglass,
-  MagnifyingGlass,
-  NotePencil,
-  Plus,
-  Timer,
-  type Icon,
-} from '@phosphor-icons/react';
+import { Hourglass, MagnifyingGlass, NotePencil, Timer, type Icon } from '@phosphor-icons/react';
 import type { BookmarkView } from '../../stores/desktop-store';
 import type { WidgetInstance, WidgetType } from '../../types/widget';
 import { openUrl } from '../../services/browser-api';
 import { useStore } from '../../stores/create-store';
-import {
-  addWidget,
-  useActiveDesktop,
-  useActiveWidgets,
-  useWorkspace,
-} from '../../stores/desktop-store';
+import { addWidget, useActiveWidgets, useWorkspace } from '../../stores/desktop-store';
 import { useSettings } from '../../stores/settings-store';
 import {
   setSearchOpen,
@@ -26,20 +13,23 @@ import {
   setWidgetMenuOpen,
   uiStore,
 } from '../../stores/ui-store';
+import { useFavicon } from '../../hooks/use-favicon';
 import { revealWidget } from '../../utils/events';
 import { siteHue, siteLetter } from '../../utils/url';
 
 interface ToolItem {
   key: string;
   label: string;
-  icon: Icon;
-  className: string;
+  icon: string;
   optional?: boolean;
   onClick: () => void;
 }
 
 function BookmarkDockItem({ view }: { view: BookmarkView }) {
   const hue = siteHue(view.url, view.title);
+  const favicon = useFavicon(view.url, 64);
+  const hasFavicon = Boolean(favicon.src && !favicon.failed);
+
   return (
     <button
       type="button"
@@ -48,10 +38,24 @@ function BookmarkDockItem({ view }: { view: BookmarkView }) {
       onClick={() => openUrl(view.url)}
     >
       <span
-        className="dock-icon dock-icon--bookmark"
+        className={`dock-icon ${favicon.loaded ? 'dock-icon--favicon' : 'dock-icon--bookmark'}`}
         style={{ '--tile-hue': hue } as CSSProperties}
       >
-        {siteLetter(view.title, view.url)}
+        {favicon.loaded ? null : siteLetter(view.title, view.url)}
+        {hasFavicon ? (
+          <img
+            className={`dock-favicon${favicon.loaded ? ' is-ready' : ''}`}
+            src={favicon.src ?? undefined}
+            alt=""
+            width={34}
+            height={34}
+            draggable={false}
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onLoad={favicon.onLoad}
+            onError={favicon.onError}
+          />
+        ) : null}
       </span>
       <span className="dock-tooltip">{view.title}</span>
     </button>
@@ -61,7 +65,6 @@ function BookmarkDockItem({ view }: { view: BookmarkView }) {
 export function Dock() {
   const settings = useSettings();
   const workspace = useWorkspace();
-  const activeDesktop = useActiveDesktop();
   const activeWidgets = useActiveWidgets();
   const widgetMenuOpen = useStore(uiStore, (state) => state.widgetMenuOpen);
 
@@ -77,14 +80,6 @@ export function Dock() {
     return null;
   }
 
-  const autoSuggestions =
-    pinned.length === 0 && activeDesktop
-      ? activeDesktop.bookmarkIds
-          .map((id) => resolveView(id))
-          .filter((view): view is BookmarkView => Boolean(view && !view.missing && view.url))
-          .slice(0, 3)
-      : [];
-
   function revealOrAdd(type: WidgetType) {
     const exists = activeWidgets.some((widget) => widget.type === type);
     if (!exists) addWidget(type);
@@ -93,32 +88,34 @@ export function Dock() {
 
   const tools: ToolItem[] = [
     {
+      key: 'finder',
+      label: '桌面与书签',
+      icon: '/icons/mac/finder.png',
+      onClick: () => setSettingsOpen(true, 'desktops'),
+    },
+    {
       key: 'search',
       label: '搜索',
-      icon: MagnifyingGlass,
-      className: 'dock-icon--search',
+      icon: '/icons/mac/safari.png',
       onClick: () => setSearchOpen(true),
     },
     {
       key: 'notes',
       label: '便签',
-      icon: NotePencil,
-      className: 'dock-icon--notes',
+      icon: '/icons/mac/notes.svg',
       onClick: () => revealOrAdd('note'),
     },
     {
       key: 'countdown',
       label: '倒计时',
-      icon: Hourglass,
-      className: 'dock-icon--countdown',
+      icon: '/icons/mac/clock.svg',
       optional: true,
       onClick: () => revealOrAdd('countdown'),
     },
     {
       key: 'pomodoro',
       label: '番茄钟',
-      icon: Timer,
-      className: 'dock-icon--pomodoro',
+      icon: '/icons/mac/pomodoro.svg',
       optional: true,
       onClick: () => revealOrAdd('pomodoro'),
     },
@@ -130,40 +127,39 @@ export function Dock() {
       <div className="dock-zone">
         <nav className="dock glass glass--strong" aria-label="Dock">
           <div className="dock__group dock__tools">
-            {tools.map((tool) => {
-              const ToolIcon = tool.icon;
-              return (
-                <button
-                  key={tool.key}
-                  type="button"
-                  className="dock-item"
-                  data-optional={tool.optional ? 'true' : undefined}
-                  aria-label={tool.label}
-                  onClick={tool.onClick}
-                >
-                  <span className={`dock-icon ${tool.className}`}>
-                    <ToolIcon size={21} weight="duotone" aria-hidden />
-                  </span>
-                  <span className="dock-tooltip">{tool.label}</span>
-                </button>
-              );
-            })}
+            {tools.map((tool) => (
+              <button
+                key={tool.key}
+                type="button"
+                className="dock-item"
+                data-optional={tool.optional ? 'true' : undefined}
+                aria-label={tool.label}
+                onClick={tool.onClick}
+              >
+                <span className="dock-icon dock-icon--app">
+                  <img
+                    className="dock-app-icon"
+                    src={tool.icon}
+                    alt=""
+                    width={54}
+                    height={54}
+                    draggable={false}
+                  />
+                </span>
+                <span className="dock-tooltip">{tool.label}</span>
+              </button>
+            ))}
           </div>
 
-          {(pinned.length > 0 || autoSuggestions.length > 0) && <div className="dock-divider" />}
-
           {pinned.length > 0 ? (
-            <div className="dock__group dock__pinned" aria-label="固定的书签">
-              {pinned.map((view) => (
-                <BookmarkDockItem key={view.id} view={view} />
-              ))}
-            </div>
-          ) : autoSuggestions.length > 0 ? (
-            <div className="dock__group dock__pinned" aria-label="当前桌面的书签">
-              {autoSuggestions.map((view) => (
-                <BookmarkDockItem key={view.id} view={view} />
-              ))}
-            </div>
+            <>
+              <div className="dock-divider" />
+              <div className="dock__group dock__pinned" aria-label="固定的书签">
+                {pinned.map((view) => (
+                  <BookmarkDockItem key={view.id} view={view} />
+                ))}
+              </div>
+            </>
           ) : null}
 
           <div className="dock-divider" />
@@ -177,8 +173,15 @@ export function Dock() {
               data-widget-menu-trigger="true"
               onClick={() => setWidgetMenuOpen(!widgetMenuOpen)}
             >
-              <span className="dock-icon dock-icon--add">
-                <Plus size={21} weight="bold" aria-hidden />
+              <span className="dock-icon dock-icon--app">
+                <img
+                  className="dock-app-icon"
+                  src="/icons/mac/launchpad.svg"
+                  alt=""
+                  width={54}
+                  height={54}
+                  draggable={false}
+                />
               </span>
               <span className="dock-tooltip">添加小组件</span>
             </button>
@@ -188,8 +191,15 @@ export function Dock() {
               aria-label="设置"
               onClick={() => setSettingsOpen(true, 'appearance')}
             >
-              <span className="dock-icon dock-icon--settings">
-                <GearSix size={21} weight="duotone" aria-hidden />
+              <span className="dock-icon dock-icon--app">
+                <img
+                  className="dock-app-icon"
+                  src="/icons/mac/settings.png"
+                  alt=""
+                  width={54}
+                  height={54}
+                  draggable={false}
+                />
               </span>
               <span className="dock-tooltip">设置</span>
             </button>

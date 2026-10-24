@@ -19,7 +19,6 @@ export function ClockWidget({ widget, compact, canvasWidth, canvasHeight }: Cloc
       widget={widget}
       title="时钟"
       icon={<Clock size={13} />}
-      variant="bare"
       compact={compact}
       canvasWidth={canvasWidth}
       canvasHeight={canvasHeight}

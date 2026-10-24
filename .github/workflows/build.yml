@@ -1,0 +1,101 @@
+name: Build extension
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and package
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build extension
+        run: npm run build
+
+      - name: Verify package entry points
+        run: |
+          test -f dist/manifest.json
+          test -f dist/newtab.html
+          test -f dist/service-worker.js
+
+      - name: Package extension
+        run: |
+          cd dist
+          cat > README.txt <<'EOF'
+          GlassDesk - macOS-style new tab
+          =================================
+
+          安装方法：
+          1. 解压这个压缩包。
+          2. 打开 chrome://extensions（Edge 为 edge://extensions）。
+          3. 开启右上角的“开发者模式”。
+          4. 点击“加载已解压的扩展程序”，选择解压后的文件夹。
+          EOF
+          zip -qr ../glassdesk-extension.zip .
+          cd ..
+          test -s glassdesk-extension.zip
+          unzip -l glassdesk-extension.zip | head -20
+          sha256sum glassdesk-extension.zip > glassdesk-extension.zip.sha256
+
+      - name: Upload extension artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: glassdesk-extension
+          path: |
+            glassdesk-extension.zip
+            glassdesk-extension.zip.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish GitHub release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download extension artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: glassdesk-extension
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            glassdesk-extension.zip \
+            glassdesk-extension.zip.sha256 \
+            --repo "${GITHUB_REPOSITORY}" \
+            --title "GlassDesk ${GITHUB_REF_NAME}" \
+            --generate-notes
