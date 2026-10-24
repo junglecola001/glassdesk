@@ -1,7 +1,7 @@
-import { AppleLogo, GearSix, MagnifyingGlass, Moon, Sun } from '@phosphor-icons/react';
+import { AppleLogo, GearSix, Moon, Sun } from '@phosphor-icons/react';
 import { useNow } from '../../hooks/use-now';
 import { useActiveDesktop } from '../../stores/desktop-store';
-import { setSearchOpen, setSettingsOpen, setWidgetMenuOpen } from '../../stores/ui-store';
+import { setSettingsOpen, setWidgetMenuOpen } from '../../stores/ui-store';
 import { formatClock, formatMenuDate } from '../../utils/date';
 import { DynamicIsland } from '../dynamic-island/DynamicIsland';
 
@@ -53,15 +53,6 @@ export function StatusBar() {
         <span className="status-weather" aria-hidden="true">
           {daytime ? <Sun size={14} weight="fill" /> : <Moon size={14} weight="fill" />}
         </span>
-        <button
-          type="button"
-          className="status-action"
-          aria-label="搜索"
-          title="搜索（⌘K）"
-          onClick={() => setSearchOpen(true)}
-        >
-          <MagnifyingGlass size={15} />
-        </button>
         <span className="status-date">{formatMenuDate(now)}</span>
         <span className="status-time">{formatClock(now)}</span>
         <button
