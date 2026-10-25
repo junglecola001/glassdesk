@@ -28,6 +28,7 @@ import {
 } from '../features/layout/widget-layout';
 import { WALLPAPERS } from '../features/layout/wallpapers';
 import { loadBookmarkSnapshot } from '../services/bookmark-service';
+import { refreshFaviconSources } from '../services/favicon-refresh';
 import { storageService } from '../services/storage-service';
 import { SCHEMA_VERSION } from '../utils/constants';
 import { createDefaultPomodoro } from '../utils/defaults';
@@ -913,9 +914,19 @@ export function refreshBookmarks(options: { reimport?: boolean; silent?: boolean
         .catch(reportPersistenceError);
     }
 
+    let faviconOrigins = 0;
+    if (options.reimport) {
+      faviconOrigins = await refreshFaviconSources(
+        Array.from(loaded.index.values(), (bookmark) => bookmark.url),
+      );
+    }
+
     if (options.reimport && !options.silent) {
+      const iconNote = faviconOrigins > 0 ? '，网站图标已刷新' : '';
       pushToast(
-        layoutChanged || cacheChanged ? '书签已重新导入。' : '没有发现新的书签。',
+        layoutChanged || cacheChanged
+          ? `书签已重新导入${iconNote}。`
+          : `没有发现新的书签${iconNote}。`,
         'success',
       );
     }

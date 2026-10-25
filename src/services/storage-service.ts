@@ -285,7 +285,7 @@ async function backupRaw(raw: RawStorage, reason: string): Promise<void> {
 }
 
 async function resetAll(): Promise<void> {
-  await removeKeys([...CORE_KEYS, STORAGE_KEYS.backup]);
+  await removeKeys([...CORE_KEYS, STORAGE_KEYS.faviconRefresh, STORAGE_KEYS.backup]);
   if (typeof localStorage !== 'undefined') {
     try {
       localStorage.removeItem(MIRROR_KEY);

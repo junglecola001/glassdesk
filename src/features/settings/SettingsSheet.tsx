@@ -344,7 +344,7 @@ function DesktopsSection() {
         </SettingRow>
         <SettingRow
           title="重新导入书签"
-          description="把新增书签加入对应桌面，同时保留你已有的排序。不会修改浏览器书签。"
+          description="把新增书签加入对应桌面，同时刷新网站图标。优先使用本地缓存；未访问过的站点会向网站请求 favicon。不会修改浏览器书签。"
         >
           <button
             type="button"

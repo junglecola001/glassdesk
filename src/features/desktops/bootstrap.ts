@@ -4,6 +4,7 @@ import { buildBookmarkCache, syncDesktopsWithTree } from '../bookmarks/sync';
 import { createDemoSeed } from '../../services/demo-data';
 import type { BookmarkSnapshot } from '../../services/bookmark-service';
 import { loadBookmarkSnapshot } from '../../services/bookmark-service';
+import { hydrateFaviconRefresh } from '../../services/favicon-refresh';
 import {
   hasBookmarkAccess,
   isExtensionEnvironment,
@@ -110,6 +111,8 @@ export async function bootstrapWorkspace(): Promise<void> {
     setWorkspaceStatus('error', '无法读取扩展存储，请重新打开新标签页。');
     return;
   }
+
+  hydrateFaviconRefresh(raw[STORAGE_KEYS.faviconRefresh]);
 
   const parsed = parsePersistedSnapshot(raw);
   if (!parsed.ok) {

@@ -186,8 +186,8 @@ export function BookmarkGrid() {
             <button
               type="button"
               className="btn btn--glass btn--small"
-              aria-label="重新导入书签"
-              title="重新导入书签"
+              aria-label="重新导入书签并刷新网站图标"
+              title="重新导入书签并刷新网站图标"
               disabled={refreshing}
               onClick={() => void refresh()}
             >
