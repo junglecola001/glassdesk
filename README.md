@@ -1,10 +1,14 @@
 # GlassDesk
 
 ![Build extension](https://github.com/junglecola001/glassdesk/actions/workflows/build.yml/badge.svg)
+<p align="center">
+    <a href="https://linux.do" alt="LINUX DO">
+        <img
+            src="https://img.shields.io/badge/LINUX-DO-FFB003.svg?logo=data:image/svg%2bxml;base64,DQo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiPjxwYXRoIGQ9Ik00Ni44Mi0uMDU1aDYuMjVxMjMuOTY5IDIuMDYyIDM4IDIxLjQyNmM1LjI1OCA3LjY3NiA4LjIxNSAxNi4xNTYgOC44NzUgMjUuNDV2Ni4yNXEtMi4wNjQgMjMuOTY4LTIxLjQzIDM4LTExLjUxMiA3Ljg4NS0yNS40NDUgOC44NzRoLTYuMjVxLTIzLjk3LTIuMDY0LTM4LjAwNC0yMS40M1EuOTcxIDY3LjA1Ni0uMDU0IDUzLjE4di02LjQ3M0MxLjM2MiAzMC43ODEgOC41MDMgMTguMTQ4IDIxLjM3IDguODE3IDI5LjA0NyAzLjU2MiAzNy41MjcuNjA0IDQ2LjgyMS0uMDU2IiBzdHlsZT0ic3Ryb2tlOm5vbmU7ZmlsbC1ydWxlOmV2ZW5vZGQ7ZmlsbDojZWNlY2VjO2ZpbGwtb3BhY2l0eToxIi8+PHBhdGggZD0iTTQ3LjI2NiAyLjk1N3EyMi41My0uNjUgMzcuNzc3IDE1LjczOGE0OS43IDQ5LjcgMCAwIDEgNi44NjcgMTAuMTU3cS00MS45NjQuMjIyLTgzLjkzIDAgOS43NS0xOC42MTYgMzAuMDI0LTI0LjM4N2E2MSA2MSAwIDAgMSA5LjI2Mi0xLjUwOCIgc3R5bGU9InN0cm9rZTpub25lO2ZpbGwtcnVsZTpldmVub2RkO2ZpbGw6IzE5MTkxOTtmaWxsLW9wYWNpdHk6MSIvPjxwYXRoIGQ9Ik03Ljk4IDcwLjkyNmMyNy45NzctLjAzNSA1NS45NTQgMCA4My45My4xMTNRODMuNDI2IDg3LjQ3MyA2Ni4xMyA5NC4wODZxLTE4LjgxIDYuNTQ0LTM2LjgzMi0xLjg5OC0xNC4yMDMtNy4wOS0yMS4zMTctMjEuMjYyIiBzdHlsZT0ic3Ryb2tlOm5vbmU7ZmlsbC1ydWxlOmV2ZW5vZGQ7ZmlsbDojZjlhZjAwO2ZpbGwtb3BhY2l0eToxIi8+PC9zdmc+" /></a>
+</p>
+
 
 深色 macOS Sonoma 风格的浏览器新标签页。它把书签文件夹映射成可以左右切换的桌面：左侧是深色玻璃小组件，右侧是书签应用图标，顶部是半透明菜单栏和居中的灵动岛搜索，底部是 Dock。支持完全本地的搜索。
-
-规格来源：[GlassDesk 开发计划与技术规格](GlassDesk_开发计划与技术规格.docx)。本文档记录实现状态、验证证据、设计决策和还需要确认的问题。
 
 ![GlassDesk 主界面](docs/screenshots/home.jpg)
 
@@ -197,24 +201,8 @@ npm run test:e2e:ext
 - **语言**：界面文案为中文，没有 i18n 框架。
 - **多标签页**：写入尽可能按 key 合并，但复杂的并发编辑仍可能出现最后一次写入覆盖；这是 MV3 存储没有事务的固有限制。
 - **备份导入**：书签按网址尽量重新匹配，原始文件夹 ID 在其他浏览器配置文件中可能失效，此时桌面会保留为自定义桌面。
-- **Chrome**：本地只有 Edge，扩展端到端测试在 Edge 中完成；Chrome 使用同一套 Chromium API，但仍需要一次真实的 Chrome 回归。
 - **范围外**：3D 桌面、物理模拟、云账号、跨设备同步、系统级 macOS 菜单栏、通知中心、网页音乐控制、天气和小组件市场均未实现。
 - **小组件布局**：位置按像素保存，窗口缩小时会尽量向内收，但极端尺寸下需要滚动；窄屏使用流式布局。
-
-## 需要确认的问题
-
-1. **系统提醒**：是否为倒计时、番茄钟添加 `alarms` + `notifications` 权限，让关闭标签页后也能收到系统通知？
-2. **默认搜索引擎**：保留 Bing，还是改为 Google 或百度？这会影响首次使用体验。
-3. **自定义壁纸**：首版是否需要本地图片上传？如果需要，要确定压缩尺寸和存储上限。
-4. **Chrome 验证与默认同步模式**：本机没有 Chrome，是否需要在有 Chrome 的环境补跑扩展测试？书签同步当前默认“跟随更新”，是否改为默认“手动导入”？
-6. **界面语言**：当前仅中文，是否需要英文界面或 i18n？
-
-## 与开发计划的对应
-
-| 阶段 | 状态 |
-| --- | --- |
-| Phase 1 工程骨架 | 完成。Vite + React + TS + MV3，生产构建、图标、manifest |
-| Phase 2 书签与桌面 | 完成。映射、切换、拖拽、持久化、事件同步、失效占位 |
 | Phase 3 视觉系统 | 完成。菜单栏、Spotlight、Dock、桌面和响应式布局 |
 | Phase 4 小组件 | 完成。时钟、便签、倒计时、番茄钟、搜索，设置与引导 |
 | Phase 5 优化与发布 | 部分完成。测试、迁移、备份和构建已完成；Chrome 真机和正式性能基准待补 |
