@@ -59,6 +59,11 @@ test.describe('MV3 extension', () => {
           title: 'Figma',
           url: 'https://www.figma.com',
         });
+        await chrome.bookmarks.create({
+          parentId: design.id,
+          title: 'Missing Site',
+          url: 'https://glassdesk-missing.invalid/',
+        });
         return { work: work.id, design: design.id };
       });
 
@@ -68,6 +73,15 @@ test.describe('MV3 extension', () => {
       await expect(page.locator('.bookmarks-title')).toHaveText('工作');
       await expect(page.locator('.bookmark')).toHaveCount(2);
       await expect(page.locator('.desktop-dot')).toHaveCount(2);
+
+      await page.locator('.desktop-dot').nth(1).click();
+      await expect(page.locator('.bookmarks-title')).toHaveText('设计');
+      const missingTile = page.locator('.bookmark').filter({ hasText: 'Missing Site' });
+      await expect(missingTile.locator('.bookmark-icon')).toContainText('M');
+      await page.waitForTimeout(2_500);
+      await expect(missingTile.locator('.bookmark-favicon.is-ready')).toHaveCount(0);
+      await page.locator('.desktop-dot').nth(0).click();
+      await expect(page.locator('.bookmarks-title')).toHaveText('工作');
 
       await page.evaluate(async (workId) => {
         await chrome.bookmarks.create({

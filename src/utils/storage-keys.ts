@@ -8,6 +8,7 @@ export const STORAGE_KEYS = {
   countdowns: 'countdowns',
   pomodoro: 'pomodoro',
   bookmarkCache: 'bookmark-cache',
+  faviconRefresh: 'favicon-refresh',
   backup: 'backup-pre-migration',
 } as const;
 
