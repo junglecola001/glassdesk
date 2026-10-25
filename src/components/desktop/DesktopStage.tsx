@@ -54,49 +54,94 @@ export function DesktopStage() {
     let accumulated = 0;
     let cooldownUntil = 0;
     let resetTimer: number | undefined;
+    let swipeStart: { x: number; y: number; at: number } | null = null;
+
+    const interactiveTarget = (target: EventTarget | null): boolean =>
+      Boolean(
+        (target as HTMLElement | null)?.closest(
+          'input, textarea, select, [contenteditable="true"], .widget, .bookmarks-section, .island-shell, .dock, .modal, .context-menu, button, a',
+        ),
+      );
+
+    const switchDesktop = (direction: 1 | -1): boolean => {
+      const state = workspaceStore.getState();
+      if (state.desktopOrder.length < 2) return false;
+      const currentIndex = state.desktopOrder.indexOf(state.activeDesktopId);
+      if (currentIndex < 0) return false;
+      const nextIndex =
+        (currentIndex + direction + state.desktopOrder.length) % state.desktopOrder.length;
+      const nextId = state.desktopOrder[nextIndex];
+      if (!nextId) return false;
+      setActiveDesktop(nextId);
+      return true;
+    };
 
     const handleWheel = (event: WheelEvent) => {
-      const target = event.target as HTMLElement | null;
-      if (
-        target?.closest(
-          'input, textarea, select, [contenteditable="true"], .widget, .island-shell, .dock, .modal, .context-menu',
-        )
-      ) {
-        return;
+      if (interactiveTarget(event.target)) return;
+      const absX = Math.abs(event.deltaX);
+      const absY = Math.abs(event.deltaY);
+      const horizontal = absX >= 4 && absX > absY * 1.05;
+      const vertical = absY >= 4 && absY >= absX * 1.05;
+      if (!horizontal && !vertical) return;
+
+      // Let the stage scroll through taller layouts first; once the boundary is
+      // reached, another wheel gesture moves to the neighbouring desktop.
+      if (vertical) {
+        const scrollable = stage.scrollHeight > stage.clientHeight + 2;
+        const atTop = stage.scrollTop <= 1;
+        const atBottom = stage.scrollTop + stage.clientHeight >= stage.scrollHeight - 2;
+        if (scrollable && ((event.deltaY > 0 && !atBottom) || (event.deltaY < 0 && !atTop))) {
+          return;
+        }
       }
-      if (Math.abs(event.deltaX) < 4 || Math.abs(event.deltaX) <= Math.abs(event.deltaY) * 1.05) {
-        return;
-      }
+
       event.preventDefault();
       const now = performance.now();
       if (now < cooldownUntil) {
         accumulated = 0;
         return;
       }
-      accumulated += event.deltaX;
+      accumulated += horizontal ? event.deltaX : event.deltaY;
       window.clearTimeout(resetTimer);
       resetTimer = window.setTimeout(() => {
         accumulated = 0;
       }, 240);
-      if (Math.abs(accumulated) < 36) return;
-      const state = workspaceStore.getState();
-      if (state.desktopOrder.length < 2) return;
-      const currentIndex = state.desktopOrder.indexOf(state.activeDesktopId);
-      if (currentIndex < 0) return;
-      const direction = accumulated > 0 ? 1 : -1;
-      const nextIndex =
-        (currentIndex + direction + state.desktopOrder.length) % state.desktopOrder.length;
-      const nextId = state.desktopOrder[nextIndex];
-      if (nextId) {
-        setActiveDesktop(nextId);
+      if (Math.abs(accumulated) < (horizontal ? 36 : 48)) return;
+      if (switchDesktop(accumulated > 0 ? 1 : -1)) {
         cooldownUntil = now + 420;
         accumulated = 0;
       }
     };
 
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.pointerType !== 'touch' || interactiveTarget(event.target)) return;
+      swipeStart = { x: event.clientX, y: event.clientY, at: performance.now() };
+    };
+
+    const handlePointerUp = (event: PointerEvent) => {
+      if (!swipeStart || event.pointerType !== 'touch') return;
+      const start = swipeStart;
+      swipeStart = null;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      if (performance.now() - start.at > 900) return;
+      if (Math.abs(dx) < 56 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      switchDesktop(dx < 0 ? 1 : -1);
+    };
+
+    const cancelSwipe = () => {
+      swipeStart = null;
+    };
+
     stage.addEventListener('wheel', handleWheel, { passive: false });
+    stage.addEventListener('pointerdown', handlePointerDown);
+    stage.addEventListener('pointerup', handlePointerUp);
+    stage.addEventListener('pointercancel', cancelSwipe);
     return () => {
       stage.removeEventListener('wheel', handleWheel);
+      stage.removeEventListener('pointerdown', handlePointerDown);
+      stage.removeEventListener('pointerup', handlePointerUp);
+      stage.removeEventListener('pointercancel', cancelSwipe);
       window.clearTimeout(resetTimer);
     };
   }, []);

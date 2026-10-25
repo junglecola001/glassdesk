@@ -2,6 +2,7 @@ import type { BookmarkCacheEntry, BookmarkLayout } from '../types/bookmark';
 import type { Desktop, DesktopLayout } from '../types/desktop';
 import type {
   AppSettings,
+  BookmarkColumns,
   BookmarkSyncMode,
   GlassIntensity,
   SearchEngineId,
@@ -18,6 +19,7 @@ import type {
 } from '../types/widget';
 import { SCHEMA_VERSION } from './constants';
 import {
+  BOOKMARK_COLUMNS,
   createDefaultPomodoro,
   createDefaultSettings,
   GLASS_INTENSITIES,
@@ -131,6 +133,12 @@ function sanitizeSettings(raw: unknown, issues: string[]): AppSettings {
     searchEngine: oneOf<SearchEngineId>(value.searchEngine, SEARCH_ENGINE_IDS, base.searchEngine),
     defaultWallpaper: oneOf<WallpaperId>(value.defaultWallpaper, WALLPAPER_IDS, base.defaultWallpaper),
     dockPinnedBookmarkIds: stringArray(value.dockPinnedBookmarkIds, 12, 200),
+    bookmarkColumns: (() => {
+      const candidate = Math.round(
+        asNumber(value.bookmarkColumns, base.bookmarkColumns),
+      ) as BookmarkColumns;
+      return BOOKMARK_COLUMNS.includes(candidate) ? candidate : base.bookmarkColumns;
+    })(),
     showDesktopDots: asBoolean(value.showDesktopDots, base.showDesktopDots),
     onboarded: asBoolean(value.onboarded, base.onboarded),
   };

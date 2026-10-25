@@ -10,7 +10,7 @@ import {
   Trash,
   WarningCircle,
 } from '@phosphor-icons/react';
-import type { DragEvent, MouseEvent } from 'react';
+import type { CSSProperties, DragEvent, MouseEvent } from 'react';
 import type { BookmarkView } from '../../stores/desktop-store';
 import {
   moveBookmarkToDesktop,
@@ -68,6 +68,8 @@ export function BookmarkGrid() {
   const missingCount = views.filter((view) => view.missing).length;
   const availableCount = views.length - missingCount;
   const pinned = new Set(settings.dockPinnedBookmarkIds);
+  const columns = settings.bookmarkColumns ?? 2;
+  const compactColumns = Math.max(3, Math.min(columns, 4));
 
   function handleDragStart(view: BookmarkView, event: DragEvent<HTMLElement>) {
     if (!desktop) return;
@@ -142,7 +144,17 @@ export function BookmarkGrid() {
   const others = workspace.desktops.filter((item) => item.id !== desktop.id);
 
   return (
-    <section className="bookmarks-section" aria-label={`${desktop.name}的书签`}>
+    <section
+      className="bookmarks-section"
+      aria-label={`${desktop.name}的书签`}
+      data-columns={columns}
+      style={
+        {
+          '--bookmark-columns': columns,
+          '--bookmark-columns-compact': compactColumns,
+        } as CSSProperties
+      }
+    >
       <header className="bookmarks-head">
         <div>
           <h2 className="bookmarks-title">

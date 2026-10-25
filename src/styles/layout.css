@@ -912,6 +912,7 @@
   overflow-y: auto;
   padding-top: calc(var(--menu-h) + 8px);
   padding-bottom: 100px;
+  touch-action: pan-y;
   scrollbar-width: none;
 }
 
@@ -957,7 +958,7 @@
   position: absolute;
   top: 42px;
   right: 16px;
-  width: 214px;
+  width: calc(var(--bookmark-columns, 2) * 106px + 2px);
   max-height: calc(100dvh - 164px);
   overflow-y: auto;
   padding: 0;
@@ -1066,7 +1067,7 @@
 
 .bookmark-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(var(--bookmark-columns, 2), minmax(0, 1fr));
   gap: 18px 2px;
   align-items: start;
   width: 100%;
@@ -1621,7 +1622,7 @@
   }
 
   .bookmark-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--bookmark-columns-compact, 3), minmax(0, 1fr));
     gap: 22px 6px;
   }
 
@@ -1657,7 +1658,7 @@
   }
 
   .bookmark-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--bookmark-columns-compact, 3), minmax(0, 1fr));
   }
 }
 
@@ -1698,7 +1699,7 @@
   }
 
   .bookmark-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(var(--bookmark-columns-compact, 3), minmax(0, 1fr));
     gap: 20px 4px;
   }
 

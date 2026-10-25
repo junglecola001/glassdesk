@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "GlassDesk",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "深色 macOS 风格新标签页：把书签变成一张可以左右切换的桌面。",
   "chrome_url_overrides": {
     "newtab": "newtab.html"

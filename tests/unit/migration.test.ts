@@ -16,6 +16,7 @@ describe('storage migration and validation', () => {
     expect(result.needsWrite).toBe(true);
     expect(result.snapshot.schemaVersion).toBe(SCHEMA_VERSION);
     expect(result.snapshot.settings.glassIntensity).toBe('medium');
+    expect(result.snapshot.settings.bookmarkColumns).toBe(2);
     expect(result.snapshot.desktopLayout.desktops).toEqual([]);
     expect(result.snapshot.notes).toEqual([]);
   });
@@ -97,6 +98,7 @@ describe('storage migration and validation', () => {
         glassIntensity: 'ultra',
         bookmarkSyncMode: 'two-way',
         searchEngine: 'unknown',
+        bookmarkColumns: 99,
         dockPinnedBookmarkIds: ['a', 'a', 42],
         showDesktopDots: 'yes',
       },
@@ -137,6 +139,7 @@ describe('storage migration and validation', () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.snapshot.settings.glassIntensity).toBe('medium');
+    expect(result.snapshot.settings.bookmarkColumns).toBe(2);
     expect(result.snapshot.settings.bookmarkSyncMode).toBe('follow');
     expect(result.snapshot.settings.dockPinnedBookmarkIds).toEqual(['a']);
     expect(result.snapshot.desktopLayout.desktops).toHaveLength(1);

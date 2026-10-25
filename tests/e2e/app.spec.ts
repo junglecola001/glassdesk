@@ -18,6 +18,14 @@ test('desktop switching and search island work', async ({ page }) => {
   await page.mouse.wheel(-120, 0);
   await expect(page.locator('.status-desktop')).toHaveText('工作');
 
+  await page.waitForTimeout(500);
+  await page.mouse.move(700, 450);
+  await page.mouse.wheel(0, 120);
+  await expect(page.locator('.status-desktop')).toHaveText('设计');
+  await page.waitForTimeout(500);
+  await page.mouse.wheel(0, -120);
+  await expect(page.locator('.status-desktop')).toHaveText('工作');
+
   await page.locator('.island__input').click();
   const shell = page.locator('.island-shell');
   await expect(shell).toHaveAttribute('data-open', 'true');
@@ -98,6 +106,13 @@ test('settings persist, backup exports, nested dialogs close independently', asy
   await glassHigh.click();
   await expect(page.locator('html')).toHaveAttribute('data-glass', 'high');
 
+  await page
+    .locator('.settings-row')
+    .filter({ hasText: '每行显示数量' })
+    .getByRole('button', { name: '3' })
+    .click();
+  await expect(page.locator('.bookmarks-section')).toHaveAttribute('data-columns', '3');
+
   await page.locator('.switch[aria-label="自动隐藏 Dock"]').click();
   await expect(page.locator('html')).toHaveAttribute('data-dock-autohide', 'true');
 
@@ -126,6 +141,7 @@ test('settings persist, backup exports, nested dialogs close independently', asy
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-glass', 'high');
   await expect(page.locator('html')).toHaveAttribute('data-dock-autohide', 'true');
+  await expect(page.locator('.bookmarks-section')).toHaveAttribute('data-columns', '3');
 });
 
 test('compact layout uses tabs instead of floating dots', async ({ page }) => {

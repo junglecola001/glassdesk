@@ -20,9 +20,11 @@ import {
   X,
 } from '@phosphor-icons/react';
 import type { Desktop } from '../../types/desktop';
+import type { BookmarkColumns } from '../../types/settings';
 import type { SettingsSection } from '../../stores/ui-store';
 import { getWallpaper, WALLPAPERS } from '../../features/layout/wallpapers';
 import { SEARCH_ENGINES } from '../../features/search/search';
+import { BOOKMARK_COLUMNS } from '../../utils/defaults';
 import { downloadBackup, importBackupFile } from '../../features/settings/backup';
 import { storageService } from '../../services/storage-service';
 import {
@@ -57,7 +59,7 @@ const SECTIONS: Array<{ id: SettingsSection; label: string; icon: typeof Monitor
 ];
 
 const SECTION_COPY: Record<SettingsSection, { title: string; description: string }> = {
-  appearance: { title: '外观', description: '壁纸、玻璃质感和细微的动效偏好。' },
+  appearance: { title: '外观', description: '壁纸、书签列数、玻璃质感和细微的动效偏好。' },
   desktops: { title: '桌面与书签', description: '管理桌面、文件夹映射和书签同步。' },
   search: { title: '搜索与快捷键', description: '默认搜索引擎与键盘操作。' },
   data: { title: '数据与备份', description: '所有数据都保存在这台电脑上。' },
@@ -203,6 +205,26 @@ function AppearanceSection({ activeDesktop }: { activeDesktop: Desktop | null })
       </div>
 
       <div className="settings-group">
+        <div className="settings-group__title">桌面书签</div>
+        <SettingRow
+          title="每行显示数量"
+          description="调整右侧书签区域的列数。窄屏会自动收敛到 3–4 列。"
+        >
+          <Segmented
+            label="每行书签数量"
+            value={String(settings.bookmarkColumns ?? 2)}
+            options={BOOKMARK_COLUMNS.map((count) => ({
+              value: String(count),
+              label: String(count),
+            }))}
+            onChange={(value) =>
+              patchSettings({ bookmarkColumns: Number(value) as BookmarkColumns })
+            }
+          />
+        </SettingRow>
+      </div>
+
+      <div className="settings-group">
         <div className="settings-group__title">玻璃质感</div>
         <SettingRow
           title="玻璃强度"
@@ -246,6 +268,12 @@ function AppearanceSection({ activeDesktop }: { activeDesktop: Desktop | null })
             checked={settings.showDesktopDots}
             onChange={(checked) => patchSettings({ showDesktopDots: checked })}
           />
+        </SettingRow>
+        <SettingRow
+          title="切换桌面"
+          description="在桌面空白处滚动滚轮，或使用触控板/触摸屏左右滑动。内容需要滚动时先滚动，到达边界后切换。"
+        >
+          <span className="chip">滚轮 / 滑动</span>
         </SettingRow>
       </div>
     </div>

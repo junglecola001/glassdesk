@@ -1,4 +1,11 @@
-import type { AppSettings, SearchEngineId, WallpaperId, GlassIntensity, BookmarkSyncMode } from '../types/settings';
+import type {
+  AppSettings,
+  BookmarkColumns,
+  BookmarkSyncMode,
+  GlassIntensity,
+  SearchEngineId,
+  WallpaperId,
+} from '../types/settings';
 import type { NoteColor, PomodoroState } from '../types/widget';
 import { DEFAULT_SEARCH_ENGINE, SCHEMA_VERSION } from './constants';
 
@@ -7,6 +14,7 @@ export const WALLPAPER_IDS: WallpaperId[] = ['sunrise', 'mint', 'dune', 'dusk', 
 export const GLASS_INTENSITIES: GlassIntensity[] = ['low', 'medium', 'high'];
 export const SYNC_MODES: BookmarkSyncMode[] = ['import', 'follow'];
 export const NOTE_COLORS: NoteColor[] = ['paper', 'apricot', 'mint', 'lilac'];
+export const BOOKMARK_COLUMNS: BookmarkColumns[] = [1, 2, 3, 4, 5];
 
 export function createDefaultSettings(overrides: Partial<AppSettings> = {}): AppSettings {
   return {
@@ -19,6 +27,7 @@ export function createDefaultSettings(overrides: Partial<AppSettings> = {}): App
     searchEngine: DEFAULT_SEARCH_ENGINE,
     defaultWallpaper: 'dusk',
     dockPinnedBookmarkIds: [],
+    bookmarkColumns: 2,
     showDesktopDots: true,
     onboarded: false,
     ...overrides,
