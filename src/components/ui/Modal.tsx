@@ -85,7 +85,7 @@ export function Modal({ open, onClose, label, className = '', children }: ModalP
     >
       <div
         ref={dialogRef}
-        className={`modal glass ${className}`}
+        className={`modal glass glass--material ${className}`}
         role="dialog"
         aria-modal="true"
         aria-label={label}

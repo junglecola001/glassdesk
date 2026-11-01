@@ -64,11 +64,13 @@
   height: var(--menu-h);
   padding: 0 12px;
   color: #fff;
-  background: linear-gradient(to bottom, rgb(8 11 18 / 48%), rgb(8 11 18 / 26%));
-  border-bottom: 1px solid rgb(255 255 255 / 10%);
-  box-shadow: 0 1px 0 rgb(0 0 0 / 18%);
-  -webkit-backdrop-filter: blur(30px) saturate(160%);
-  backdrop-filter: blur(30px) saturate(160%);
+  background: linear-gradient(to bottom, rgb(10 13 20 / 34%), rgb(10 13 20 / 16%));
+  border-bottom: 1px solid rgb(255 255 255 / 12%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 0 rgb(0 0 0 / 20%);
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat)) brightness(var(--glass-brightness));
+  backdrop-filter: blur(var(--blur)) saturate(var(--sat)) brightness(var(--glass-brightness));
   text-shadow: 0 1px 3px rgb(0 0 0 / 38%);
   pointer-events: none;
 }
@@ -228,15 +230,13 @@
   margin-top: 3px;
   overflow: hidden;
   opacity: 1;
-  border: 1px solid rgb(255 255 255 / 10%);
-  border-radius: 999px;
-  background-color: #05060a;
-  background-image: linear-gradient(180deg, rgb(255 255 255 / 6%), transparent 62%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 7%),
-    0 10px 24px -16px rgb(0 0 0 / 85%);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-  backdrop-filter: blur(24px) saturate(1.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  background-color: var(--glass-bg-strong);
+  background-image: var(--glass-gloss), var(--glass-sheen);
+  box-shadow: var(--glass-shadow-soft), var(--glass-inner);
+  -webkit-backdrop-filter: blur(calc(var(--blur) * 0.7)) saturate(var(--sat)) brightness(var(--glass-brightness));
+  backdrop-filter: blur(calc(var(--blur) * 0.7)) saturate(var(--sat)) brightness(var(--glass-brightness));
   pointer-events: auto;
   transition:
     width 300ms var(--ease-out),
@@ -248,29 +248,24 @@
 }
 
 .island-shell:hover {
-  border-color: rgb(255 255 255 / 16%);
-  background-color: #0a0b10;
+  border-color: rgb(255 255 255 / 24%);
+  background-color: color-mix(in srgb, var(--glass-bg-strong), #fff 6%);
 }
 
-.island-shell::before {
-  display: none;
-}
-
+/* The open search panel floats above page content, so it switches to the
+   solid material form instead of sampling the wallpaper. */
 .island-shell[data-open='true'] {
   width: min(640px, calc(100vw - 48px));
   height: auto;
   margin-top: 6px;
   overflow: hidden;
-  border: 1px solid rgb(255 255 255 / 14%);
-  border-radius: 18px;
-  background-color: rgb(29 31 36 / 95%);
-  background-image: linear-gradient(160deg, rgb(255 255 255 / 7%), transparent 55%);
-  box-shadow:
-    0 42px 100px -34px rgb(0 0 0 / 88%),
-    0 10px 28px rgb(0 0 0 / 45%),
-    inset 0 1px 0 rgb(255 255 255 / 10%);
-  -webkit-backdrop-filter: blur(44px) saturate(180%);
-  backdrop-filter: blur(44px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-panel);
+  background-color: var(--glass-material);
+  background-image: var(--glass-gloss);
+  box-shadow: var(--glass-shadow-menu), var(--glass-inner);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .island-bar {
@@ -637,14 +632,9 @@
   gap: 6px;
   max-width: calc(100vw - 24px);
   padding: 7px 9px;
-  border-radius: 20px;
-  border-color: rgb(255 255 255 / 14%);
-  background-color: rgb(24 27 34 / 58%);
-  background-image: linear-gradient(to bottom, rgb(255 255 255 / 9%), rgb(255 255 255 / 2%));
-  box-shadow:
-    0 22px 52px -18px rgb(0 0 0 / 80%),
-    0 2px 8px rgb(0 0 0 / 28%),
-    inset 0 1px 0 rgb(255 255 255 / 13%);
+  border-radius: 22px;
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner);
   pointer-events: auto;
 }
 
@@ -1311,18 +1301,10 @@
 
 .widget--glass {
   overflow: hidden;
-  border-radius: 16px;
-  border-color: rgb(255 255 255 / 12%);
-  background-color: rgb(34 36 42 / 72%);
-  background-image:
-    linear-gradient(160deg, rgb(255 255 255 / 8%) 0%, rgb(255 255 255 / 2%) 44%, transparent 70%),
-    linear-gradient(205deg, rgb(60 68 88 / 8%), transparent 58%);
-  box-shadow:
-    0 30px 60px -26px rgb(0 0 0 / 60%),
-    0 2px 10px rgb(0 0 0 / 26%),
-    inset 0 1px 0 rgb(255 255 255 / 11%);
-  -webkit-backdrop-filter: blur(30px) saturate(165%);
-  backdrop-filter: blur(30px) saturate(165%);
+  border-radius: var(--radius-panel);
+  background-color: var(--glass-card);
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-shadow), var(--glass-inner);
 }
 
 .widget--dragging {

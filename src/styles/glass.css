@@ -1,31 +1,34 @@
 .glass {
   position: relative;
+  isolation: isolate;
   background-color: var(--glass-bg);
-  background-image: linear-gradient(
-    160deg,
-    rgb(255 255 255 / 10%) 0%,
-    rgb(255 255 255 / 2%) 42%,
-    transparent 68%
-  );
+  background-image: var(--glass-gloss), var(--glass-sheen);
   border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow), var(--glass-inner);
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-  backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat)) brightness(var(--glass-brightness));
+  backdrop-filter: blur(var(--blur)) saturate(var(--sat)) brightness(var(--glass-brightness));
 }
 
+/* Lens rim. A refracting edge is brightest at two opposite arcs and nearly
+   invisible along the straight sides; a conic gradient approximates it. */
 .glass::before {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(
-    137deg,
-    rgb(255 255 255 / 34%),
-    rgb(255 255 255 / 6%) 36%,
-    rgb(255 255 255 / 2%) 66%,
-    rgb(255 255 255 / 18%)
+  background: conic-gradient(
+    from 200deg,
+    var(--glass-rim),
+    rgb(255 255 255 / 6%) 10%,
+    rgb(255 255 255 / 2%) 28%,
+    var(--glass-rim-soft) 45%,
+    var(--glass-rim) 52%,
+    rgb(255 255 255 / 6%) 62%,
+    rgb(255 255 255 / 2%) 80%,
+    var(--glass-rim-soft) 92%,
+    var(--glass-rim)
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
@@ -35,23 +38,73 @@
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   mask-composite: exclude;
+  opacity: 0.9;
   pointer-events: none;
+  transition: opacity var(--dur) var(--ease-out);
+}
+
+/* Specular sheen. Default sits above the top edge; the pointer hook moves it
+   with --spec-x / --spec-y and raises the opacity. */
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    220px 220px at var(--spec-x, 26%) var(--spec-y, -18%),
+    var(--glass-spec),
+    rgb(255 255 255 / 0) 64%
+  );
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity 240ms var(--ease-out);
+}
+
+.glass[data-specular='true']::after {
+  opacity: 1;
 }
 
 .glass--soft {
   background-color: var(--glass-bg-soft);
-  box-shadow: var(--glass-shadow-soft), inset 0 1px 0 rgb(255 255 255 / 8%);
+  box-shadow: var(--glass-shadow-soft), inset 0 1px 0 rgb(255 255 255 / 14%);
 }
 
 .glass--strong {
   background-color: var(--glass-bg-strong);
 }
 
+/* Solid form: panels painted above content cannot sample what is behind them,
+   so they use the opaque material plus the same Tahoe edge instead of a
+   translucent fill pretending to be glass. */
+.glass--material {
+  background-color: var(--glass-material);
+  background-image: var(--glass-gloss);
+  box-shadow: var(--glass-shadow-menu), var(--glass-inner);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.glass--material::after {
+  opacity: 0.4;
+}
+
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .glass,
-  .glass--soft {
-    background-color: var(--glass-bg-strong);
-    background-image: none;
+  .glass--soft,
+  .glass--strong {
+    background-color: var(--glass-material);
+    background-image: var(--glass-gloss);
+  }
+
+  .glass::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass::after {
+    display: none;
   }
 }
 

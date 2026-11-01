@@ -14,7 +14,7 @@ export function ToastHost() {
         return (
           <div
             key={toast.id}
-            className="toast glass glass--strong"
+            className="toast glass glass--material"
             data-tone={toast.tone}
             role="status"
             onClick={() => dismissToast(toast.id)}

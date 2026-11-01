@@ -242,7 +242,7 @@ function WidgetPalette({ widgets }: { widgets: WidgetInstance[] }) {
   }, []);
 
   return (
-    <div ref={paletteRef} className="widget-palette glass glass--strong" role="menu">
+    <div ref={paletteRef} className="widget-palette glass glass--material" role="menu">
       <div className="widget-palette__head">添加小组件</div>
       {WIDGET_OPTIONS.map((option) => {
         const Icon = option.icon;

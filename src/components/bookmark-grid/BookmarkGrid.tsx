@@ -376,7 +376,7 @@ function BookmarkContextMenu({
   return createPortal(
     <div
       ref={menuRef}
-      className="context-menu glass glass--strong"
+      className="context-menu glass glass--material"
       style={{ left: x, top: y, maxHeight: Math.max(180, window.innerHeight - y - 16) }}
       role="menu"
       aria-label={view.title}

@@ -19,6 +19,7 @@ import { Dock } from '../components/dock/Dock';
 import { StatusBar } from '../components/status-bar/StatusBar';
 import { SettingsSheet } from '../features/settings/SettingsSheet';
 import { ToastHost } from '../components/ui/ToastHost';
+import { useLiquidSpecular } from '../hooks/use-liquid-specular';
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) return false;
@@ -30,6 +31,8 @@ export function App() {
   const desktop = useActiveDesktop();
   const settings = useSettings();
   const wallpaper = getWallpaper(desktop?.wallpaper ?? settings.defaultWallpaper);
+
+  useLiquidSpecular(status === 'ready' && !settings.reducedMotion);
 
   useEffect(() => {
     const staticBoot = document.getElementById('boot-static');
