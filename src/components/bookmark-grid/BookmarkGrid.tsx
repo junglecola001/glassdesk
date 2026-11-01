@@ -30,12 +30,15 @@ import { reorderIds } from '../../features/bookmarks/tree';
 import { openUrl } from '../../services/browser-api';
 import { prettyUrl } from '../../utils/url';
 import { BookmarkTile } from './BookmarkTile';
+import { FolderTile } from './FolderTile';
+import { FolderView } from './FolderView';
 
 const DRAG_TYPE = 'application/x-glassdesk-bookmark';
 
 interface DragPayload {
-  bookmarkId: string;
+  itemId: string;
   desktopId: string;
+  kind: 'bookmark' | 'folder';
 }
 
 interface ContextState {
@@ -55,25 +58,36 @@ export function BookmarkGrid() {
   const [dropTarget, setDropTarget] = useState<{ id: string; after: boolean } | null>(null);
   const [context, setContext] = useState<ContextState | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [folderStack, setFolderStack] = useState<string[]>([]);
 
   useEffect(() => {
     setDropTarget(null);
     setDragPayload(null);
     dragRef.current = null;
     setContext(null);
+    setFolderStack([]);
   }, [desktop?.id]);
 
   if (!desktop) return null;
 
   const missingCount = views.filter((view) => view.missing).length;
-  const availableCount = views.length - missingCount;
+  const bookmarkCount = views.reduce(
+    (total, view) =>
+      total + (view.missing ? 0 : view.kind === 'folder' ? view.count ?? 0 : 1),
+    0,
+  );
+  const folderCount = views.filter((view) => view.kind === 'folder' && !view.missing).length;
   const pinned = new Set(settings.dockPinnedBookmarkIds);
   const columns = settings.bookmarkColumns ?? 2;
   const compactColumns = Math.max(3, Math.min(columns, 4));
 
   function handleDragStart(view: BookmarkView, event: DragEvent<HTMLElement>) {
     if (!desktop) return;
-    const payload: DragPayload = { bookmarkId: view.id, desktopId: desktop.id };
+    const payload: DragPayload = {
+      itemId: view.id,
+      desktopId: desktop.id,
+      kind: view.kind,
+    };
     dragRef.current = payload;
     setDragPayload(payload);
     event.dataTransfer.effectAllowed = 'move';
@@ -105,13 +119,17 @@ export function BookmarkGrid() {
     handleDragEnd();
     if (!payload) return;
     if (payload.desktopId !== desktop.id) {
-      moveBookmarkToDesktop(payload.bookmarkId, payload.desktopId, desktop.id);
+      if (payload.kind === 'folder') return;
+      moveBookmarkToDesktop(payload.itemId, payload.desktopId, desktop.id);
       return;
     }
-    if (payload.bookmarkId === view.id) return;
+    if (payload.itemId === view.id) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const after = event.clientX > rect.left + rect.width / 2;
-    reorderBookmarks(desktop.id, reorderIds(desktop.bookmarkIds, payload.bookmarkId, view.id, after));
+    reorderBookmarks(
+      desktop.id,
+      reorderIds(desktop.bookmarkIds, payload.itemId, view.id, after),
+    );
   }
 
   function handleGridDrop(event: DragEvent<HTMLDivElement>) {
@@ -122,15 +140,17 @@ export function BookmarkGrid() {
     handleDragEnd();
     if (!payload) return;
     if (payload.desktopId !== desktop.id) {
-      moveBookmarkToDesktop(payload.bookmarkId, payload.desktopId, desktop.id);
+      if (payload.kind === 'folder') return;
+      moveBookmarkToDesktop(payload.itemId, payload.desktopId, desktop.id);
       return;
     }
-    const next = desktop.bookmarkIds.filter((id) => id !== payload.bookmarkId);
-    next.push(payload.bookmarkId);
+    const next = desktop.bookmarkIds.filter((id) => id !== payload.itemId);
+    next.push(payload.itemId);
     reorderBookmarks(desktop.id, next);
   }
 
   function openContext(view: BookmarkView, event: MouseEvent<HTMLElement> | { x: number; y: number }) {
+    if (view.kind === 'folder') return;
     const point = 'clientX' in event ? { x: event.clientX, y: event.clientY } : event;
     setContext({ view, x: point.x, y: point.y });
   }
@@ -169,7 +189,8 @@ export function BookmarkGrid() {
             {desktop.name}
           </h2>
           <div className="bookmarks-meta">
-            <span>{availableCount} 个书签</span>
+            <span>{bookmarkCount} 个书签</span>
+            {folderCount > 0 ? <span>· {folderCount} 个文件夹</span> : null}
             {missingCount > 0 ? (
               <span className="bookmarks-meta__warning">
                 <WarningCircle size={12} weight="fill" />
@@ -217,23 +238,40 @@ export function BookmarkGrid() {
           }}
           onDrop={handleGridDrop}
         >
-          {views.map((view) => (
-            <BookmarkTile
-              key={view.id}
-              view={view}
-              desktopId={desktop.id}
-              pinned={pinned.has(view.id)}
-              dragging={dragPayload?.bookmarkId === view.id}
-              dropPosition={
-                dropTarget?.id === view.id ? (dropTarget.after ? 'after' : 'before') : null
-              }
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              onContextMenu={openContext}
-            />
-          ))}
+          {views.map((view) =>
+            view.kind === 'folder' ? (
+              <FolderTile
+                key={view.id}
+                view={view}
+                desktopId={desktop.id}
+                dragging={dragPayload?.itemId === view.id}
+                dropPosition={
+                  dropTarget?.id === view.id ? (dropTarget.after ? 'after' : 'before') : null
+                }
+                onOpen={(folderId) => setFolderStack([folderId])}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              />
+            ) : (
+              <BookmarkTile
+                key={view.id}
+                view={view}
+                desktopId={desktop.id}
+                pinned={pinned.has(view.id)}
+                dragging={dragPayload?.itemId === view.id}
+                dropPosition={
+                  dropTarget?.id === view.id ? (dropTarget.after ? 'after' : 'before') : null
+                }
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                onContextMenu={openContext}
+              />
+            ),
+          )}
         </div>
       ) : (
         <EmptyBookmarks
@@ -245,6 +283,19 @@ export function BookmarkGrid() {
           refreshing={refreshing}
         />
       )}
+
+      {folderStack.length > 0 ? (
+        <FolderView
+          stack={folderStack}
+          onPush={(folderId) =>
+            setFolderStack((current) =>
+              current[current.length - 1] === folderId ? current : [...current, folderId],
+            )
+          }
+          onPop={() => setFolderStack((current) => current.slice(0, -1))}
+          onClose={() => setFolderStack([])}
+        />
+      ) : null}
 
       {context ? (
         <BookmarkContextMenu

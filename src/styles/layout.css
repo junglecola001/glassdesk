@@ -1226,6 +1226,212 @@
   bottom: -3px;
 }
 
+/* Folder icon rendered for a nested bookmark folder. */
+.bookmark-icon--folder {
+  background: none;
+  border-color: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.bookmark-icon--folder img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  filter: drop-shadow(0 9px 14px rgb(0 0 0 / 48%));
+}
+
+.bookmark:hover .bookmark-icon--folder {
+  box-shadow: none;
+  filter: drop-shadow(0 12px 18px rgb(0 0 0 / 52%)) saturate(1.05);
+}
+
+.bookmark-folder-count {
+  position: absolute;
+  right: -5px;
+  bottom: -4px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: rgb(10 132 255 / 92%);
+  border: 1px solid rgb(255 255 255 / 36%);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 42%);
+}
+
+/* Launchpad-style folder view for nested bookmark folders. */
+.folder-view-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: clamp(18px, 4vw, 48px);
+  background: rgb(5 8 18 / 38%);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+  backdrop-filter: blur(24px) saturate(1.35);
+  animation: scrim-in 180ms var(--ease-out) both;
+}
+
+.folder-view {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  min-width: min(360px, 100%);
+  max-width: min(900px, 100%);
+  max-height: min(620px, calc(100dvh - 96px));
+  overflow: hidden;
+  border-radius: 32px;
+  background:
+    var(--glass-gloss),
+    rgb(24 27 34 / 82%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  box-shadow:
+    0 50px 120px -46px rgb(0 0 0 / 88%),
+    0 10px 30px rgb(0 0 0 / 30%),
+    var(--glass-inner);
+  -webkit-backdrop-filter: blur(42px) saturate(1.75);
+  backdrop-filter: blur(42px) saturate(1.75);
+  outline: none;
+  animation: modal-in 260ms var(--ease-out) both;
+}
+
+.folder-view__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px 13px 20px;
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
+}
+
+.folder-view__nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.folder-view__icon {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgb(0 0 0 / 45%));
+}
+
+.folder-view__heading {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.folder-view__title {
+  overflow: hidden;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-view__path {
+  overflow: hidden;
+  margin-top: 1px;
+  color: rgb(255 255 255 / 48%);
+  font-size: 10.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.folder-view__meta {
+  flex: none;
+  color: rgb(255 255 255 / 58%);
+  font-size: 11px;
+}
+
+.folder-view__button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid rgb(255 255 255 / 15%);
+  background: rgb(255 255 255 / 11%);
+  color: rgb(255 255 255 / 86%);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+
+.folder-view__button:hover {
+  background: rgb(255 255 255 / 20%);
+}
+
+.folder-view__button:active {
+  transform: scale(0.94);
+}
+
+.folder-view__grid {
+  display: grid;
+  grid-template-columns: repeat(var(--folder-columns, 3), 88px);
+  gap: 18px 10px;
+  align-content: start;
+  justify-content: center;
+  padding: 22px 24px 26px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.folder-view__grid .bookmark {
+  justify-self: center;
+}
+
+.folder-view__empty {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 54px 26px;
+  color: rgb(255 255 255 / 82%);
+  text-align: center;
+}
+
+.folder-view__empty p {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.folder-view__empty span {
+  color: rgb(255 255 255 / 50%);
+  font-size: 11.5px;
+}
+
+@media (max-width: 720px) {
+  .folder-view {
+    width: 100%;
+    border-radius: 26px;
+  }
+
+  .folder-view__grid {
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    padding: 18px 16px 22px;
+  }
+
+  .folder-view__meta {
+    display: none;
+  }
+}
+
 .bookmark-empty {
   display: flex;
   flex-direction: column;

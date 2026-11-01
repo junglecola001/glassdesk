@@ -3,7 +3,8 @@ import type { AppSettings } from '../../types/settings';
 import type { CountdownData, NoteData, PomodoroState, WidgetInstance } from '../../types/widget';
 import type { DesktopLayout } from '../../types/desktop';
 import { deriveBookmarkLayout } from '../bookmarks/layout';
-import { findNodeById, remapBookmarkIdsByUrl } from '../bookmarks/tree';
+import { collectFolderIds, findNodeById, remapBookmarkIdsByUrl } from '../bookmarks/tree';
+import { syncDesktopsWithTree } from '../bookmarks/sync';
 import { loadBookmarkSnapshot } from '../../services/bookmark-service';
 import { storageService } from '../../services/storage-service';
 import { APP_VERSION } from '../../utils/constants';
@@ -109,12 +110,14 @@ export async function importBackupFile(file: File): Promise<{ desktops: number; 
     loaded = null;
   }
 
-  const desktops = snapshot.desktopLayout.desktops.map((desktop) => {
+  const liveFolderIds = loaded ? collectFolderIds(loaded.tree) : new Set<string>();
+  let desktops = snapshot.desktopLayout.desktops.map((desktop) => {
     if (!loaded) return desktop;
     const bookmarkIds = remapBookmarkIdsByUrl(
       desktop.bookmarkIds,
       snapshot.bookmarkCache,
       loaded.index,
+      liveFolderIds,
     );
     const sourceFolderId =
       desktop.sourceFolderId && findNodeById(loaded.tree, desktop.sourceFolderId)
@@ -127,6 +130,14 @@ export async function importBackupFile(file: File): Promise<{ desktops: number; 
       ...(sourceFolderId === null ? { missingSource: undefined } : {}),
     };
   });
+  if (loaded) {
+    desktops = syncDesktopsWithTree(
+      desktops,
+      loaded.tree,
+      Date.now(),
+      snapshot.bookmarkCache,
+    ).desktops;
+  }
 
   const desktopIds = new Set(desktops.map((desktop) => desktop.id));
   const desktopOrder = snapshot.desktopLayout.desktopOrder.filter((id) => desktopIds.has(id));
@@ -154,6 +165,10 @@ export async function importBackupFile(file: File): Promise<{ desktops: number; 
 
   return {
     desktops: desktops.length,
-    bookmarks: desktops.reduce((total, desktop) => total + desktop.bookmarkIds.length, 0),
+    bookmarks: desktops.reduce(
+      (total, desktop) =>
+        total + desktop.bookmarkIds.filter((id) => !liveFolderIds.has(id)).length,
+      0,
+    ),
   };
 }

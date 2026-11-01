@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import type { BookmarkNode } from '../../src/types/bookmark';
 import {
   collectBookmarkIdsInFolder,
+  collectDescendantIds,
+  collectDirectItemIds,
+  collectFolderIds,
+  findNodePath,
   indexBookmarks,
   listFolderCandidates,
   mergeBookmarkIds,
@@ -65,6 +69,21 @@ describe('bookmark tree helpers', () => {
     expect(collectBookmarkIdsInFolder(tree(), 'missing')).toEqual([]);
   });
 
+  it('keeps nested folders as direct item ids instead of flattening them', () => {
+    expect(collectDirectItemIds(tree(), 'work')).toEqual(['b1', 'nested']);
+    expect(collectDirectItemIds(tree(), 'nested')).toEqual(['b2']);
+    expect(collectDirectItemIds(tree(), 'missing')).toEqual([]);
+    expect(collectDescendantIds(tree(), 'work')).toEqual(['b1', 'nested', 'b2']);
+    expect(collectFolderIds(tree()).has('nested')).toBe(true);
+    expect(collectFolderIds(tree()).has('b1')).toBe(false);
+  });
+
+  it('finds a folder path by id', () => {
+    expect(findNodePath(tree(), 'nested')).toEqual(['书签栏', '工作', '文档']);
+    expect(findNodePath(tree(), 'work')).toEqual(['书签栏', '工作']);
+    expect(findNodePath(tree(), 'missing')).toBeNull();
+  });
+
   it('lists folder candidates with counts and depth', () => {
     const folders = listFolderCandidates(tree());
     const work = folders.find((folder) => folder.id === 'work');
@@ -107,5 +126,13 @@ describe('bookmark tree helpers', () => {
     expect(remapped[0]).toBe('b1');
     expect(remapped[1]).toBe('b3');
     expect(remapped).toHaveLength(2);
+
+    const withFolders = remapBookmarkIdsByUrl(
+      ['nested', 'old3', 'gone-folder'],
+      oldCache,
+      live,
+      new Set(['nested']),
+    );
+    expect(withFolders).toEqual(['nested']);
   });
 });

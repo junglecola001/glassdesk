@@ -83,4 +83,55 @@ describe('bookmark sync', () => {
     expect(result.changed).toBe(false);
     expect(result.desktops[0]).toBe(custom);
   });
+
+  it('keeps nested folders as folder entries and migrates flattened layouts', () => {
+    const nested: BookmarkNode[] = [
+      {
+        id: '0',
+        title: '',
+        children: [
+          {
+            id: 'bar',
+            title: '书签栏',
+            children: [
+              {
+                id: 'work',
+                title: '工作',
+                children: [
+                  { id: 'a', title: 'A', url: 'https://a.example', parentId: 'work' },
+                  {
+                    id: 'docs',
+                    title: '文档',
+                    children: [
+                      { id: 'b', title: 'B', url: 'https://b.example', parentId: 'docs' },
+                      {
+                        id: 'ext',
+                        title: '扩展',
+                        children: [
+                          {
+                            id: 'c',
+                            title: 'C',
+                            url: 'https://c.example',
+                            parentId: 'ext',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    const flattened = desktop({ sourceFolderId: 'work', bookmarkIds: ['a', 'b', 'c'] });
+    const first = syncDesktopsWithTree([flattened], nested, 100, {});
+    expect(first.desktops[0]?.bookmarkIds).toEqual(['a', 'docs']);
+    expect(first.cache.b?.title).toBe('B');
+
+    const second = syncDesktopsWithTree(first.desktops, nested, 200, first.cache);
+    expect(second.changed).toBe(false);
+    expect(second.desktops[0]?.bookmarkIds).toEqual(['a', 'docs']);
+  });
 });

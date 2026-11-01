@@ -70,13 +70,16 @@ export function Dock() {
 
   const pinned = settings.dockPinnedBookmarkIds
     .map((id) => resolveView(id))
-    .filter((view): view is BookmarkView => Boolean(view && !view.missing && view.url));
+    .filter(
+      (view): view is BookmarkView =>
+        Boolean(view && view.kind === 'bookmark' && !view.missing && view.url),
+    );
 
   function resolveView(id: string): BookmarkView | null {
     const live = workspace.liveBookmarks.get(id);
-    if (live) return { ...live, missing: false };
+    if (live) return { ...live, kind: 'bookmark', missing: false };
     const cached = workspace.bookmarkCache[id];
-    if (cached) return { ...cached, missing: true };
+    if (cached) return { ...cached, kind: 'bookmark', missing: true };
     return null;
   }
 

@@ -1,6 +1,6 @@
 import { createDefaultSettings, createDefaultPomodoro } from '../utils/defaults';
 import { SCHEMA_VERSION } from '../utils/constants';
-import { collectBookmarkIdsInFolder } from '../features/bookmarks/tree';
+import { collectDirectItemIds } from '../features/bookmarks/tree';
 import { createDefaultWidgetsForDesktop } from '../features/layout/widget-layout';
 import type { BookmarkNode } from '../types/bookmark';
 import type { Desktop } from '../types/desktop';
@@ -33,12 +33,23 @@ export const DEMO_BOOKMARK_TREE: BookmarkNode[] = [
             bookmark('demo-linear', 'Linear', 'https://linear.app'),
             bookmark('demo-notion', 'Notion', 'https://www.notion.so'),
             bookmark('demo-github', 'GitHub', 'https://github.com'),
-            bookmark('demo-slack', 'Slack', 'https://app.slack.com'),
             bookmark('demo-vercel', 'Vercel', 'https://vercel.com'),
             bookmark('demo-sentry', 'Sentry', 'https://sentry.io'),
-            bookmark('demo-feishu', '飞书', 'https://www.feishu.cn'),
             bookmark('demo-linear-docs', 'Linear Docs', 'https://linear.app/docs'),
-            bookmark('demo-chrome-docs', 'Chrome 扩展文档', 'https://developer.chrome.com/docs/extensions'),
+            bookmark('demo-dashboard', '数据看板', 'https://analytics.google.com'),
+            folder('demo-work-team', '团队协作', [
+              bookmark('demo-slack', 'Slack', 'https://app.slack.com'),
+              bookmark('demo-feishu', '飞书', 'https://www.feishu.cn'),
+            ]),
+            folder('demo-work-docs', '文档库', [
+              folder('demo-work-docs-ext', '扩展文档', [
+                bookmark(
+                  'demo-chrome-docs',
+                  'Chrome 扩展文档',
+                  'https://developer.chrome.com/docs/extensions',
+                ),
+              ]),
+            ]),
           ]),
           folder('demo-design', '设计', [
             bookmark('demo-figma', 'Figma', 'https://www.figma.com'),
@@ -111,7 +122,7 @@ export function createDemoSeed(
     name: folderInfo.name,
     sourceFolderId: folderInfo.id,
     wallpaper: folderInfo.wallpaper,
-    bookmarkIds: collectBookmarkIdsInFolder(DEMO_BOOKMARK_TREE, folderInfo.id),
+    bookmarkIds: collectDirectItemIds(DEMO_BOOKMARK_TREE, folderInfo.id),
     createdAt: now - 86_400_000,
     updatedAt: now - 60_000,
   }));

@@ -72,6 +72,59 @@ export function collectBookmarkIdsInFolder(roots: BookmarkNode[], folderId: stri
   return ids;
 }
 
+/**
+ * Direct children of a folder, in bookmark-tree order. Folders are returned
+ * alongside bookmarks: a nested folder becomes a folder icon on the desktop
+ * instead of being flattened into it.
+ */
+export function collectDirectItemIds(roots: BookmarkNode[], folderId: string): string[] {
+  const folder = findNodeById(roots, folderId);
+  if (!folder || folder.url) return [];
+  return (folder.children ?? []).map((child) => child.id);
+}
+
+/** All bookmark and folder ids below a folder, excluding the folder itself. */
+export function collectDescendantIds(roots: BookmarkNode[], folderId: string): string[] {
+  const folder = findNodeById(roots, folderId);
+  if (!folder || folder.url) return [];
+  const ids: string[] = [];
+  const visit = (node: BookmarkNode) => {
+    ids.push(node.id);
+    node.children?.forEach(visit);
+  };
+  folder.children?.forEach(visit);
+  return ids;
+}
+
+export function collectFolderIds(roots: BookmarkNode[]): Set<string> {
+  const ids = new Set<string>();
+  const visit = (node: BookmarkNode) => {
+    if (!node.url) {
+      ids.add(node.id);
+      node.children?.forEach(visit);
+    }
+  };
+  roots.forEach(visit);
+  return ids;
+}
+
+/** Folder title path from the top of the tree, e.g. ['书签栏', '工作']. */
+export function findNodePath(roots: BookmarkNode[], id: string): string[] | null {
+  const walk = (nodes: BookmarkNode[], path: string[]): string[] | null => {
+    for (const node of nodes) {
+      const name = node.title.trim();
+      const next = name ? [...path, name] : path;
+      if (node.id === id) return next;
+      if (node.children?.length) {
+        const found = walk(node.children, next);
+        if (found) return found;
+      }
+    }
+    return null;
+  };
+  return walk(roots, []);
+}
+
 export function listFolderCandidates(roots: BookmarkNode[], maxDepth = 5): FolderCandidate[] {
   const candidates: FolderCandidate[] = [];
   const walk = (node: BookmarkNode, path: string[], depth: number) => {
@@ -169,6 +222,7 @@ export function remapBookmarkIdsByUrl(
   oldIds: string[],
   oldCache: Record<string, { url: string }>,
   liveIndex: Map<string, BookmarkMeta>,
+  liveFolderIds: Set<string> = new Set(),
 ): string[] {
   const liveIds = new Set(liveIndex.keys());
   const byUrl = new Map<string, string>();
@@ -180,6 +234,7 @@ export function remapBookmarkIdsByUrl(
   for (const oldId of oldIds) {
     let nextId: string | undefined;
     if (liveIds.has(oldId)) nextId = oldId;
+    else if (liveFolderIds.has(oldId)) nextId = oldId;
     else {
       const cached = oldCache[oldId];
       if (cached) nextId = byUrl.get(cached.url);

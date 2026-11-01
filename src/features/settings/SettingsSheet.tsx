@@ -23,6 +23,7 @@ import type { Desktop } from '../../types/desktop';
 import type { BookmarkColumns } from '../../types/settings';
 import type { SettingsSection } from '../../stores/ui-store';
 import { getWallpaper, WALLPAPERS } from '../../features/layout/wallpapers';
+import { countBookmarksInItems } from '../../features/bookmarks/folders';
 import { SEARCH_ENGINES } from '../../features/search/search';
 import { BOOKMARK_COLUMNS } from '../../utils/defaults';
 import { downloadBackup, importBackupFile } from '../../features/settings/backup';
@@ -382,6 +383,7 @@ function DesktopsSection() {
               isActive={desktop.id === workspace.activeDesktopId}
               wallpaperName={getWallpaper(desktop.wallpaper ?? settings.defaultWallpaper).name}
               wallpaperBackground={getWallpaper(desktop.wallpaper ?? settings.defaultWallpaper).background}
+              bookmarkCount={countBookmarksInItems(workspace.bookmarkTree, desktop.bookmarkIds)}
               sourceLabel={
                 desktop.sourceFolderId
                   ? workspace.bookmarkFolders.find((folder) => folder.id === desktop.sourceFolderId)
@@ -460,6 +462,7 @@ interface DesktopAdminRowProps {
   isActive: boolean;
   wallpaperName: string;
   wallpaperBackground: string;
+  bookmarkCount: number;
   sourceLabel: string;
   onDelete: () => void;
 }
@@ -471,6 +474,7 @@ function DesktopAdminRow({
   isActive,
   wallpaperName,
   wallpaperBackground,
+  bookmarkCount,
   sourceLabel,
   onDelete,
 }: DesktopAdminRowProps) {
@@ -513,7 +517,7 @@ function DesktopAdminRow({
           }}
         />
         <div className="desktop-admin__meta">
-          <span>{desktop.bookmarkIds.length} 个书签</span>
+          <span>{bookmarkCount} 个书签</span>
           <span>·</span>
           <span>{sourceLabel}</span>
           {desktop.missingSource ? <span className="warn">来源已失效</span> : null}

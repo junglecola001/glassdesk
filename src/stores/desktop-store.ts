@@ -1,5 +1,6 @@
 import type {
   BookmarkCacheEntry,
+  BookmarkItemView,
   BookmarkLayout,
   BookmarkMeta,
   BookmarkNode,
@@ -16,9 +17,11 @@ import type {
   WidgetType,
 } from '../types/widget';
 import { deriveBookmarkLayout } from '../features/bookmarks/layout';
+import { resolveFolderItem } from '../features/bookmarks/folders';
 import { buildBookmarkCache, syncDesktopsWithTree } from '../features/bookmarks/sync';
 import {
-  collectBookmarkIdsInFolder,
+  collectDirectItemIds,
+  collectFolderIds,
   findNodeById,
 } from '../features/bookmarks/tree';
 import {
@@ -130,30 +133,34 @@ export function useDesktopBookmarkViews(): Array<BookmarkView & { desktopId: str
   );
 }
 
-export interface BookmarkView {
-  id: string;
-  title: string;
-  url: string;
-  path: string[];
-  missing: boolean;
-}
+export type BookmarkView = BookmarkItemView;
 
 export function resolveBookmarkView(state: WorkspaceState, id: string): BookmarkView {
   const live = state.liveBookmarks.get(id);
   if (live) {
-    return { id: live.id, title: live.title, url: live.url, path: live.path, missing: false };
+    return {
+      id: live.id,
+      kind: 'bookmark',
+      title: live.title,
+      url: live.url,
+      path: live.path,
+      missing: false,
+    };
   }
+  const folder = resolveFolderItem(state.bookmarkTree, id);
+  if (folder) return folder;
   const cached = state.bookmarkCache[id];
   if (cached) {
     return {
       id: cached.id,
+      kind: 'bookmark',
       title: cached.title,
       url: cached.url,
       path: cached.path,
       missing: true,
     };
   }
-  return { id, title: '已失效的书签', url: '', path: [], missing: true };
+  return { id, kind: 'bookmark', title: '已失效的书签', url: '', path: [], missing: true };
 }
 
 export function getSearchableBookmarks(state: WorkspaceState): BookmarkMeta[] {
@@ -308,7 +315,7 @@ export async function addDesktopFromFolder(folderId: string): Promise<string | n
       pushToast('找不到这个书签文件夹。', 'error');
       return null;
     }
-    const bookmarkIds = collectBookmarkIdsInFolder(loaded.tree, folderId);
+    const bookmarkIds = collectDirectItemIds(loaded.tree, folderId);
     const current = workspaceStore.getState();
     const settings = settingsStore.getState().settings;
     const wallpaper =
@@ -566,9 +573,10 @@ export function removeBookmarkFromDesktop(desktopId: string, bookmarkId: string)
 export function cleanupMissingBookmarks(): void {
   const state = workspaceStore.getState();
   const live = new Set(state.liveBookmarks.keys());
+  const folders = collectFolderIds(state.bookmarkTree);
   let removed = 0;
   const desktops = state.desktops.map((desktop) => {
-    const ids = desktop.bookmarkIds.filter((id) => live.has(id));
+    const ids = desktop.bookmarkIds.filter((id) => live.has(id) || folders.has(id));
     removed += desktop.bookmarkIds.length - ids.length;
     return ids.length === desktop.bookmarkIds.length
       ? desktop
@@ -582,7 +590,7 @@ export function cleanupMissingBookmarks(): void {
   writeLayoutAndBookmarkLayout(
     buildLayout(desktops, state.desktopOrder, state.activeDesktopId),
   );
-  pushToast(`已清理 ${removed} 个失效书签。`, 'success');
+  pushToast(`已清理 ${removed} 个失效项目。`, 'success');
 }
 
 export function addWidget(type: WidgetType): void {
@@ -972,7 +980,7 @@ export async function completeOnboarding(selectedFolderIds: string[]): Promise<v
       createDesktopRecord(
         safeName,
         folderId,
-        collectBookmarkIdsInFolder(tree, folderId),
+        collectDirectItemIds(tree, folderId),
         wallpaper,
       ),
     );

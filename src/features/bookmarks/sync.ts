@@ -1,7 +1,8 @@
 import type { BookmarkCacheEntry, BookmarkNode } from '../../types/bookmark';
 import type { Desktop } from '../../types/desktop';
 import {
-  collectBookmarkIdsInFolder,
+  collectDescendantIds,
+  collectDirectItemIds,
   findNodeById,
   indexBookmarks,
   mergeBookmarkIds,
@@ -33,6 +34,9 @@ export function buildBookmarkCache(
 
 /**
  * Idempotently reconciles mapped desktops with the live bookmark tree.
+ * A desktop shows its source folder's direct children: bookmarks stay tiles and
+ * nested folders stay folder icons. Older builds flattened nested bookmarks into
+ * the desktop, so those legacy ids are replaced by the direct-child structure.
  * Missing bookmarks are kept as-is so a temporary failure or a moved source
  * folder cannot erase a user's custom layout.
  */
@@ -52,15 +56,35 @@ export function syncDesktopsWithTree(
       return { ...desktop, missingSource: true, updatedAt: now };
     }
 
-    const liveIds = collectBookmarkIdsInFolder(roots, desktop.sourceFolderId);
-    const merged = mergeBookmarkIds(desktop.bookmarkIds, liveIds);
+    const directIds = collectDirectItemIds(roots, desktop.sourceFolderId);
+    const directSet = new Set(directIds);
+    const descendantIds = new Set(collectDescendantIds(roots, desktop.sourceFolderId));
+    const legacyFlattened = desktop.bookmarkIds.some(
+      (id) => descendantIds.has(id) && !directSet.has(id),
+    );
+
+    // Keep the user's order for surviving entries; legacy builds also keep
+    // bookmarks moved in from outside the source folder.
+    const baseline = legacyFlattened
+      ? desktop.bookmarkIds.filter((id) => directSet.has(id))
+      : desktop.bookmarkIds;
+    const merged = mergeBookmarkIds(baseline, directIds);
+    const ids = legacyFlattened
+      ? mergeBookmarkIds(
+          merged.ids,
+          desktop.bookmarkIds.filter((id) => !descendantIds.has(id)),
+        ).ids
+      : merged.ids;
     const wasMissing = desktop.missingSource === true;
-    if (merged.added.length === 0 && !wasMissing) return desktop;
+    const orderChanged =
+      ids.length !== desktop.bookmarkIds.length ||
+      ids.some((id, index) => id !== desktop.bookmarkIds[index]);
+    if (!orderChanged && !wasMissing) return desktop;
 
     changed = true;
     return {
       ...desktop,
-      bookmarkIds: merged.ids,
+      bookmarkIds: ids,
       updatedAt: now,
       ...(wasMissing ? { missingSource: undefined } : {}),
     };

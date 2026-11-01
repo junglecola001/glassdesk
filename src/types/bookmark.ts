@@ -7,6 +7,21 @@ export interface BookmarkNode {
   dateAdded?: number;
 }
 
+export type BookmarkItemKind = 'bookmark' | 'folder';
+
+/** A bookmark or a nested folder rendered as one desktop item. */
+export interface BookmarkItemView {
+  id: string;
+  kind: BookmarkItemKind;
+  title: string;
+  /** Empty for folders. */
+  url: string;
+  path: string[];
+  missing: boolean;
+  /** Number of bookmarks inside a folder. Folders only. */
+  count?: number;
+}
+
 export interface BookmarkMeta {
   id: string;
   title: string;

@@ -64,6 +64,27 @@ test('bookmark drag reorder and context menu work', async ({ page }) => {
   await expect(page.locator('.context-menu')).toHaveCount(0);
 });
 
+test('nested bookmark folders open as launchpad folder views', async ({ page }) => {
+  await expect(page.locator('.bookmark--folder')).toHaveCount(2);
+
+  await page.locator('.bookmark--folder').filter({ hasText: '团队协作' }).click();
+  await expect(page.locator('.folder-view')).toBeVisible();
+  await expect(page.locator('.folder-view__title')).toHaveText('团队协作');
+  await expect(page.locator('.folder-view .bookmark')).toHaveCount(2);
+  await expect(page.locator('.folder-view')).toContainText('Slack');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('.folder-view')).toHaveCount(0);
+
+  await page.locator('.bookmark--folder').filter({ hasText: '文档库' }).click();
+  await page.locator('.folder-view .bookmark--folder').filter({ hasText: '扩展文档' }).click();
+  await expect(page.locator('.folder-view__title')).toHaveText('扩展文档');
+  await expect(page.locator('.folder-view .bookmark')).toHaveCount(1);
+  await page.locator('.folder-view__back').click();
+  await expect(page.locator('.folder-view__title')).toHaveText('文档库');
+  await page.locator('.folder-view__button[aria-label="关闭文件夹"]').click();
+  await expect(page.locator('.folder-view')).toHaveCount(0);
+});
+
 test('countdown creation and pomodoro completion persist', async ({ page }) => {
   await page.locator('.countdown-icon-button[aria-label="新建倒计时"]').click();
   await page.locator('.countdown-form .input').first().fill('春节');

@@ -10,6 +10,7 @@ import {
   X,
 } from '@phosphor-icons/react';
 import type { BookmarkMeta } from '../../types/bookmark';
+import { countBookmarksInItems } from '../../features/bookmarks/folders';
 import type { Desktop } from '../../types/desktop';
 import {
   SEARCH_ENGINES,
@@ -82,6 +83,7 @@ export function DynamicIsland() {
   const settings = useSettings();
   const desktops = useStore(workspaceStore, (state) => state.desktops);
   const activeDesktopId = useStore(workspaceStore, (state) => state.activeDesktopId);
+  const bookmarkTree = useStore(workspaceStore, (state) => state.bookmarkTree);
   const bookmarks = useStore(workspaceStore, (state) => {
     if (state.lastSyncedAt > 0) return Array.from(state.liveBookmarks.values());
     return Object.values(state.bookmarkCache).map((entry) => ({
@@ -287,7 +289,7 @@ export function DynamicIsland() {
                         <span className="island-row__text">
                           <span className="island-row__title">{row.desktop.name}</span>
                           <span className="island-row__meta">
-                            {row.desktop.bookmarkIds.length} 个书签
+                            {countBookmarksInItems(bookmarkTree, row.desktop.bookmarkIds)} 个书签
                             {row.desktop.id === activeDesktopId ? ' · 当前桌面' : ''}
                           </span>
                         </span>
@@ -425,7 +427,7 @@ export function DynamicIsland() {
                         <span className="island-row__text">
                           <span className="island-row__title">{desktop.name}</span>
                           <span className="island-row__meta">
-                            {desktop.bookmarkIds.length} 个书签
+                            {countBookmarksInItems(bookmarkTree, desktop.bookmarkIds)} 个书签
                           </span>
                         </span>
                         <span className="island-row__side">

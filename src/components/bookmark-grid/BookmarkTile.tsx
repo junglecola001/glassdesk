@@ -6,23 +6,26 @@ import { siteHue, siteLetter } from '../../utils/url';
 
 interface BookmarkTileProps {
   view: BookmarkView;
-  desktopId: string;
-  pinned: boolean;
-  dragging: boolean;
-  dropPosition: 'before' | 'after' | null;
-  onDragStart: (view: BookmarkView, event: DragEvent<HTMLElement>) => void;
-  onDragEnd: () => void;
-  onDragOver: (view: BookmarkView, event: DragEvent<HTMLElement>) => void;
-  onDrop: (view: BookmarkView, event: DragEvent<HTMLElement>) => void;
-  onContextMenu: (view: BookmarkView, event: MouseEvent<HTMLElement> | { x: number; y: number }) => void;
+  desktopId?: string;
+  pinned?: boolean;
+  dragging?: boolean;
+  dropPosition?: 'before' | 'after' | null;
+  onDragStart?: (view: BookmarkView, event: DragEvent<HTMLElement>) => void;
+  onDragEnd?: () => void;
+  onDragOver?: (view: BookmarkView, event: DragEvent<HTMLElement>) => void;
+  onDrop?: (view: BookmarkView, event: DragEvent<HTMLElement>) => void;
+  onContextMenu?: (
+    view: BookmarkView,
+    event: MouseEvent<HTMLElement> | { x: number; y: number },
+  ) => void;
 }
 
 export function BookmarkTile({
   view,
   desktopId,
-  pinned,
-  dragging,
-  dropPosition,
+  pinned = false,
+  dragging = false,
+  dropPosition = null,
   onDragStart,
   onDragEnd,
   onDragOver,
@@ -32,8 +35,10 @@ export function BookmarkTile({
   const hue = siteHue(view.url, view.title);
   const favicon = useFavicon(view.missing ? null : view.url, 128);
   const hasFavicon = Boolean(favicon.src && !favicon.failed);
+  const draggable = Boolean(onDragStart);
 
   function openMenuFromKeyboard(event: KeyboardEvent<HTMLElement>) {
+    if (!onContextMenu) return;
     if (event.key !== 'ContextMenu' && !(event.shiftKey && event.key === 'F10')) return;
     event.preventDefault();
     const rect = event.currentTarget.getBoundingClientRect();
@@ -45,16 +50,24 @@ export function BookmarkTile({
     'data-missing': view.missing ? 'true' : 'false',
     'data-dragging': dragging ? 'true' : 'false',
     'data-drop': dropPosition ?? undefined,
-    draggable: true,
-    onDragStart: (event: DragEvent<HTMLElement>) => onDragStart(view, event),
-    onDragEnd,
-    onDragOver: (event: DragEvent<HTMLElement>) => onDragOver(view, event),
-    onDrop: (event: DragEvent<HTMLElement>) => onDrop(view, event),
-    onContextMenu: (event: MouseEvent<HTMLElement>) => {
-      event.preventDefault();
-      onContextMenu(view, event);
-    },
-    onKeyDown: openMenuFromKeyboard,
+    draggable,
+    ...(onDragStart
+      ? { onDragStart: (event: DragEvent<HTMLElement>) => onDragStart(view, event) }
+      : {}),
+    ...(onDragEnd ? { onDragEnd } : {}),
+    ...(onDragOver
+      ? { onDragOver: (event: DragEvent<HTMLElement>) => onDragOver(view, event) }
+      : {}),
+    ...(onDrop ? { onDrop: (event: DragEvent<HTMLElement>) => onDrop(view, event) } : {}),
+    ...(onContextMenu
+      ? {
+          onContextMenu: (event: MouseEvent<HTMLElement>) => {
+            event.preventDefault();
+            onContextMenu(view, event);
+          },
+          onKeyDown: openMenuFromKeyboard,
+        }
+      : {}),
     title: view.missing ? `${view.title}（书签已失效）` : view.title,
     'aria-label': view.missing ? `${view.title}，书签已失效` : view.title,
   };
@@ -98,6 +111,7 @@ export function BookmarkTile({
   );
 
   function openMissingMenu(element: HTMLElement) {
+    if (!onContextMenu) return;
     const rect = element.getBoundingClientRect();
     onContextMenu(view, { x: rect.left + rect.width / 2, y: rect.bottom });
   }
